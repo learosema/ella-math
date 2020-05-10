@@ -1,6 +1,6 @@
 {
-  "name": "ella",
-  "version": "1.0.0",
+  "name": "ella-math",
+  "version": "0.1.0",
   "description": "Ella is a shorthand for linear algebra :)",
   "main": "dist/ella.umd.js",
   "types": "dist/ella.d.ts",
