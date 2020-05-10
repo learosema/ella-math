@@ -4,7 +4,9 @@
   "description": "Ella is a shorthand for linear algebra :)",
   "scripts": {
     "test": "jest",
-    "build": "rollup -c rollup.config.js"
+    "build:types": "tsc -t esnext --moduleResolution node -d --emitDeclarationOnly --outFile dist/ella.d.ts src/ella.ts",
+    "build:js": "rollup -c rollup.config.js",
+    "build": "npm run build:js -s && npm run build:types -s"
   },
   "files": [
     "src",
