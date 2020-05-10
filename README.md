@@ -1,3 +1,5 @@
 # Ella
 
-Minimal linear algebra library
+Work in progress linear algebra library.
+
+Provides vector and matrix calculus operations.

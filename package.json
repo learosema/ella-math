@@ -2,13 +2,9 @@
   "name": "ella",
   "version": "1.0.0",
   "description": "Ella is a shorthand for linear algebra :)",
-  "source": "src/ella.ts",
-  "main": "dist/ella.esm.js",
-  "unpkg": "dist/ella.umd.js",
-  "types": "dist/ella.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "microbundle --name Ella --format es,umd --sourcemap false"
+    "build": "rollup -c rollup.config.js"
   },
   "files": [
     "src",
@@ -25,13 +21,14 @@
   },
   "homepage": "https://github.com/terabaud/ella#readme",
   "dependencies": {
-    "@types/jest": "^25.2.1",
-    "jest": "^26.0.1",
-    "typedoc": "^0.17.6"
+    "@rollup/plugin-typescript": "^4.1.1",
+    "rollup": "^2.9.0"
   },
   "devDependencies": {
-    "microbundle": "^0.11.0",
-    "ts-jest": "^25.5.0",
+    "@types/jest": "^25.2.1",
+    "jest": "^26.0.1",
+    "ts-jest": "^25.5.1",
+    "tslib": "^1.11.2",
     "typescript": "^3.8.3"
   }
 }

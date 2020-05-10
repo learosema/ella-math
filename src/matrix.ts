@@ -1,3 +1,6 @@
+import { Vec2, Vec3, Vec4 } from "./vector";
+
+/** @class Mat */
 export class Mat {
   values: number[];
   numRows: number;
@@ -32,6 +35,23 @@ export class Mat {
 
   static fromArray(values: (string | number)[]) {
     return new Mat(...values);
+  }
+
+  /**
+   * Converts a vector into a 1x(2|3|4) matrix
+   * @param value the input vector
+   */
+  static fromVector(value: Vec2| Vec3 | Vec4): Mat {
+    if (value instanceof Vec2) {
+      return Mat.fromArray(['1x2', ...value.toArray()])
+    }
+    if (value instanceof Vec3) {
+      return Mat.fromArray(['1x3', ...value.toArray()])
+    }
+    if (value instanceof Vec4) {
+      return Mat.fromArray(['1x4', ...value.toArray()])
+    }
+    throw Error('unsupported type');
   }
 
   valueAt(row: number, column: number) {
@@ -100,7 +120,7 @@ export class Mat {
     throw Error('ArgumentError');
   }
 
-  mul(param: Mat | number) {
+  mul(param: Mat | number | Vec2 | Vec3 | Vec4): Mat {
     if (typeof param === 'number') {
       const multipliedValues: (string | number)[] = this.values.map(
         (value) => value * param
@@ -109,6 +129,9 @@ export class Mat {
         multipliedValues.unshift(`${this.numRows}x${this.numCols}`);
       }
       return Mat.fromArray(multipliedValues);
+    }
+    if (param instanceof Vec2 || param instanceof Vec3 || param instanceof Vec4) {
+      return this.mul(Mat.fromVector(param));
     }
     if (param instanceof Mat) {
       const mat = param;
