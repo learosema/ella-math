@@ -6,7 +6,7 @@
   "types": "dist/ella.d.ts",
   "scripts": {
     "test": "jest",
-    "docs": "typedoc",
+    "docs": "typedoc && touch docs/.nojekyll",
     "build:types": "tsc -t esnext --moduleResolution node -d --emitDeclarationOnly --outFile dist/ella.d.ts src/ella.ts",
     "build:js": "rollup -c rollup.config.js",
     "build": "npm run build:js -s && npm run build:types -s"
