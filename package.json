@@ -2,8 +2,11 @@
   "name": "ella",
   "version": "1.0.0",
   "description": "Ella is a shorthand for linear algebra :)",
+  "main": "dist/ella.umd.js",
+  "types": "dist/ella.d.ts",
   "scripts": {
     "test": "jest",
+    "docs": "typedoc",
     "build:types": "tsc -t esnext --moduleResolution node -d --emitDeclarationOnly --outFile dist/ella.d.ts src/ella.ts",
     "build:js": "rollup -c rollup.config.js",
     "build": "npm run build:js -s && npm run build:types -s"
@@ -31,6 +34,7 @@
     "jest": "^26.0.1",
     "ts-jest": "^25.5.1",
     "tslib": "^1.11.2",
+    "typedoc": "^0.17.6",
     "typescript": "^3.8.3"
   }
 }
