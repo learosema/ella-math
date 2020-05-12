@@ -1,4 +1,4 @@
-import { Mat } from './matrix';
+import { Mat, Mat2 } from './matrix';
 
 describe('generic matrix arithmetics', () => {
   test('2x3 matrix initialization', () => {
@@ -74,7 +74,7 @@ describe('generic matrix arithmetics', () => {
     expect(d.toArray()).toEqual([-10, -11, -10, -8]);
   });
 });
-/*
+
 describe('2x2 matrix arithmetics', () => {
   test('Mat2 identity', () => {
     const m = Mat2.identity();
@@ -86,10 +86,10 @@ describe('2x2 matrix arithmetics', () => {
 
   test('Mat2 rowAt and colAt', () => {
     // prettier-ignore
-    const mat = new Mat2(
+    const mat = new Mat([
       1, 2, // column 1
       3, 4  // column 2
-    );
+    ]);
     const row = mat.rowAt(1);
     expect(row).toEqual([2, 4]);
 
@@ -98,34 +98,32 @@ describe('2x2 matrix arithmetics', () => {
   });
 
   test('Mat2 determinant', () => {
-    const mat = new Mat2(1, 2, 3, 4);
+    const mat = new Mat([1, 2, 3, 4]);
     expect(mat.determinant()).toBe(-2);
   });
 
   test('Mat2 multiplication with identity matrix', () => {
-    const a = new Mat2(2, 3, 5, 7);
-    const b = Mat2.identity();
-    const c = a.mul(b);
+    const a = new Mat([2, 3, 5, 7]);
+    const b = Mat2.identity() as Mat;
+    const c = a.mul(b) as Mat;
     expect(a.equals(c)).toBeTruthy();
   });
 
   test('Mat2 multiplication', () => {
-    const a = new Mat2(2, 3, 5, 7);
-    const b = new Mat2(-1, 4, 6, 8);
-    const c = a.mul(b);
+    const a = new Mat([2, 3, 5, 7]);
+    const b = new Mat([-1, 4, 6, 8]);
+    const c = a.mul(b) as Mat;
     //    -1 6  a = -1 * 2 + 4 * 5 = 18
     //     4 8  b =  2 * 6 + 5 * 8 = 52
     // 2 5 a b  c = -1 * 3 + 7 * 4 = 25
     // 3 7 c d  d =  3 * 6 + 7 * 8 = 74
-    const d = new Mat2(18, 25, 52, 74);
+    const d = new Mat([18, 25, 52, 74]);
     expect(c.equals(d)).toBeTruthy();
   });
 
   test('Mat2 toString()', () => {
-    const a = new Mat2(2, 3, 5, 7);
-    expect(a.toString()).toBe('mat2(2, 3, 5, 7)');
+    const a = new Mat([2, 3, 5, 7]);
+    expect(a.toString()).toBe('mat2x2(2, 3, 5, 7)');
   });
-
   
 });
-*/
