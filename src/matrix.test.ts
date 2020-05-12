@@ -1,4 +1,4 @@
-import { Mat, Mat2 } from './matrix';
+import { Mat } from './matrix';
 
 describe('generic matrix arithmetics', () => {
   test('2x3 matrix initialization', () => {
@@ -57,7 +57,7 @@ describe('generic matrix arithmetics', () => {
     // 1 4 39 -12 -23
     // 2 5 54 -18 -31
     // 3 6 69 -24 -39
-    const c = a.mul(b);
+    const c = a.mul(b) as Mat;
     expect(c.numCols).toBe(3);
     expect(c.numRows).toBe(3);
 
@@ -68,7 +68,7 @@ describe('generic matrix arithmetics', () => {
     //           3   6
     // 7 -4 -3 -10 -10
     // 8 -2 -5 -11  -8
-    const d = b.mul(a);
+    const d = b.mul(a) as Mat;
     expect(d.numCols).toBe(2);
     expect(d.numRows).toBe(2);
     expect(d.toArray()).toEqual([-10, -11, -10, -8]);
