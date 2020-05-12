@@ -1,27 +1,39 @@
-export class Vec2 {
-  constructor(public x: number, public y: number) {}
+// idea: provide a single Vector class instead of Vec2, Vec3, Vec4
+export class Vec {
+  readonly values: number[];
+  
+  constructor(...values: number[]) {
+    this.values = values;
+  }
+
+  get dim() { return this.values.length }
+  get x() { return this.values[0]; }
+  get y() { return this.values[1]; }
+  get z() { return this.values[2]; }
+  get w() { return this.values[3]; }
 
   /**
-   * Create 2D vector from Array
+   * Create vector from Array
    * @param arr array of numbers
    */
-  static fromArray(arr: number[]): Vec2 {
-    return new Vec2(arr[0] || 0, arr[1] || 0);
+  static fromArray(arr: number[]): Vec {
+    return new Vec(...arr);
   }
 
   /**
    * Create vector with x = y = n
-   * @param n
+   * @param n the number
+   * @param dim the dimension
    */
-  static fromNumber(n: number): Vec2 {
-    return new Vec2(n, n);
+  static fromNumber(n: number, dim: number): Vec {
+    return new Vec(...Array(dim).fill(n));
   }
 
   /**
    * clone vector
    */
-  clone(): Vec2 {
-    return new Vec2(this.x, this.y);
+  clone(): Vec {
+    return new Vec(...this.values);
   }
 
   /**
@@ -29,17 +41,18 @@ export class Vec2 {
    * @param otherVec addend
    * @returns addition result
    */
-  add(otherVec: Vec2): Vec2 {
-    return new Vec2(this.x + otherVec.x, this.y + otherVec.y);
+  add(otherVec: Vec): Vec {
+    return new Vec(...this.values.map((v, idx) => v + otherVec.values[idx]));
   }
 
+  
   /**
-   * substract vector
-   * @param otherVec subtrahend
-   * @returns subtraction result
+   * sub vector
+   * @param otherVec addend
+   * @returns addition result
    */
-  sub(otherVec: Vec2): Vec2 {
-    return new Vec2(this.x - otherVec.x, this.y - otherVec.y);
+  sub(otherVec: Vec): Vec {
+    return new Vec(...this.values.map((v, idx) => v - otherVec.values[idx]));
   }
 
   /**
@@ -47,135 +60,63 @@ export class Vec2 {
    * @param value scalar
    * @returns multiplication result
    */
-  mul(value: number): Vec2 {
-    return new Vec2(this.x * value, this.y * value);
+  mul(value: number): Vec {
+    return new Vec(...this.values.map(v => v * value));
   }
 
   /**
    * divide vector with scalar
    * @param value scalar
-   * @returns division result
+   * @returns multiplication result
    */
-  div(value: number): Vec2 {
-    return new Vec2(this.x / value, this.y / value);
+  div(value: number): Vec {
+    return new Vec(...this.values.map(x => x / value));
   }
 
   /**
    * dot product
-   * @param otherVec
+   * @param otherVec 
    */
-  dot(otherVec: Vec2): number {
-    return this.x * otherVec.x + this.y * otherVec.y;
+  dot(otherVec: Vec): number {
+    return this.values.map((x, idx) => x * otherVec.values[idx]).reduce((a, b) => a + b);
   }
 
   /**
-   * Check for equality
-   * @param otherVec
-   * @returns true if equal
+   * check for equality
+   * @param otherVec 
    */
-  equals(otherVec: Vec2): boolean {
-    return this.x === otherVec.x && this.y === otherVec.y;
+  equals(otherVec: Vec): boolean {
+    return this.values.map((v, idx) => v === otherVec.values[idx]).reduce((a, b) => a === b);
   }
 
   /**
    * Calculate length
    */
   get length() {
-    return Math.sqrt(this.x ** 2 + this.y ** 2);
+    if (this.dim === 1) {
+      return this.x;
+    }
+    if (this.dim === 2) {
+      return Math.sqrt(this.x ** 2 + this.y ** 2);
+    }
+    if (this.dim === 3) {
+      return Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2);
+    }
+    throw Error('dimension not supported');
   }
 
   /**
    * Convert to array
    */
   toArray() {
-    return [this.x, this.y];
+    return this.values.slice(0);
   }
 
   /**
    * Convert to string, in the form of `(x, y)`
    */
   toString() {
-    return `(${this.x}, ${this.y})`;
-  }
-}
-
-export class Vec3 {
-  constructor(public x: number, public y: number, public z: number) {}
-
-  /**
-   * create vector from array
-   * @param data Array containing [x, y, z]
-   */
-  static fromArray(data: number[]): Vec3 {
-    return new Vec3(data[0] || 0, data[1] || 0, data[2] || 0);
-  }
-
-  /**
-   * create vector from number, using x = y = z = n
-   * @param n
-   */
-  static fromNumber(n: number): Vec3 {
-    return new Vec3(n, n, n);
-  }
-
-  /**
-   * create 3D vector from 2D vector and an optional number
-   * @param vec2
-   * @param z
-   */
-  static fromVec2(vec2: Vec2, z: number = 0): Vec3 {
-    return new Vec3(vec2.x, vec2.y, z);
-  }
-
-  /**
-   * clone vector
-   */
-  clone(): Vec3 {
-    return new Vec3(this.x, this.y, this.z);
-  }
-
-  /**
-   * add vector
-   * @param otherVec addend
-   * @returns new Vec3 instance containing the addition result
-   */
-  add(otherVec: Vec3): Vec3 {
-    return new Vec3(
-      this.x + otherVec.x,
-      this.y + otherVec.y,
-      this.z + otherVec.z
-    );
-  }
-
-  /**
-   * sub vector
-   * @param otherVec subtrahend
-   * @returns new Vec3 instance containing the subtraction result
-   */
-  sub(otherVec: Vec3): Vec3 {
-    return new Vec3(
-      this.x - otherVec.x,
-      this.y - otherVec.y,
-      this.z - otherVec.z
-    );
-  }
-
-  /**
-   * multiply vector
-   * @param value factor
-   * @returns new Vec3 instance containing the multiplication result
-   */
-  mul(value: number): Vec3 {
-    return new Vec3(this.x * value, this.y * value, this.z * value);
-  }
-
-  /**
-   * divide vactor
-   * @param value factor
-   * @returns new Vec3 instance containing the division result
-   */
-  div(value: number): Vec3 {
-    return new Vec3(this.x / value, this.y / value, this.z / value);
+    return `(${this.values.join(', ')})`;
   }
 
   /**
@@ -183,26 +124,15 @@ export class Vec3 {
    * @param otherVec
    * @returns new Vec3 instance containing cross product
    */
-  cross(otherVec: Vec3): Vec3 {
-    return new Vec3(
+  cross(otherVec: Vec): Vec {
+    if (this.dim !== 3 || otherVec.dim !== 3) {
+      throw Error('dimension not supported');
+    }
+    return new Vec(
       this.y * otherVec.z - this.z * otherVec.y,
       this.z * otherVec.x - this.x * otherVec.z,
       this.x * otherVec.y - this.y * otherVec.x
     );
-  }
-  /**
-   * dot product
-   * @param otherVec
-   */
-  dot(otherVec: Vec3): number {
-    return this.x * otherVec.x + this.y * otherVec.y + this.z * otherVec.z;
-  }
-
-  /**
-   * get vector length
-   */
-  get length(): number {
-    return Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2);
   }
 
   /**
@@ -213,57 +143,4 @@ export class Vec3 {
     return this.div(this.length);
   }
 
-  /**
-   * convert to array
-   * @returns array containing [x, y, z]
-   */
-  toArray(): number[] {
-    return [this.x, this.y, this.z];
-  }
-
-  /**
-   * convert to string
-   * @returns string containing `(x, y)`
-   */
-  toString(): string {
-    return `(${this.x}, ${this.y}, ${this.z})`;
-  }
-
-  /**
-   * check for equality
-   * @param otherVec
-   */
-  equals(otherVec: Vec3): boolean {
-    return (
-      otherVec instanceof Vec3 &&
-      this.x === otherVec.x &&
-      this.y === otherVec.y &&
-      this.z === otherVec.z
-    );
-  }
-}
-
-export class Vec4 {
-  constructor(
-    public x: number,
-    public y: number,
-    public z: number,
-    public w: number
-  ) {}
-
-  static fromArray(data: number[]) {
-    return new Vec4(data[0] || 0, data[1] || 0, data[2] || 0, data[3] || 0);
-  }
-
-  static fromNumber(n: number) {
-    return new Vec4(n, n, n, n);
-  }
-
-  toArray() {
-    return [this.x, this.y, this.z, this.w];
-  }
-
-  clone() {
-    return new Vec4(this.x, this.y, this.z, this.w);
-  }
 }

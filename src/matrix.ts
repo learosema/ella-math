@@ -1,4 +1,4 @@
-import { Vec2, Vec3, Vec4 } from "./vector";
+import { Vec } from "./vector";
 
 /** @class Mat */
 export class Mat {
@@ -30,15 +30,9 @@ export class Mat {
    * useful for matrix multiplication
    * @param value the input vector
    */
-  static fromVector(value: Vec2| Vec3 | Vec4): Mat {
-    if (value instanceof Vec2) {
-      return new Mat(value.toArray(), {numRows: 1, numCols: 2});
-    }
-    if (value instanceof Vec3) {
-      return new Mat(value.toArray(), {numRows: 1, numCols: 2});
-    }
-    if (value instanceof Vec4) {
-      return new Mat(value.toArray(), {numRows: 1, numCols: 4});
+  static fromVector(value: Vec): Mat {
+    if (value instanceof Vec) {
+      return new Mat(value.toArray(), {numRows: 1, numCols: value.dim});
     }
     throw Error('unsupported type');
   }
@@ -103,26 +97,21 @@ export class Mat {
     throw Error('ArgumentError');
   }
 
-  mul(param: Mat | number | Vec2 | Vec3 | Vec4): Mat|Vec2|Vec3|Vec4 {
+  mul(param: Mat | number | Vec): Mat | Vec {
     if (typeof param === 'number') {
       const multipliedValues: number[] = this.values.map(
         (value) => value * param
       );
       return new Mat(multipliedValues, {numRows: this.numRows, numCols: this.numCols});
     }
-    if (param instanceof Vec2 && this.numRows === 2) {
+    if (param instanceof Vec && this.numRows === 2) {
+      const v = param as Vec;
+      if (param.dim !== this.numRows) {
+        throw Error('dimension mismatch');
+      }
       const m = this.mul(Mat.fromVector(param)) as Mat;
-      return new Vec2(m.values[0], m.values[1]);
+      return new Vec(...m.values);
     }
-    if (param instanceof Vec3) {
-      const m = this.mul(Mat.fromVector(param)) as Mat;
-      return new Vec3(m.values[0], m.values[1], m.values[2]);
-    }
-    if (param instanceof Vec4) {
-      const m = this.mul(Mat.fromVector(param)) as Mat;
-      return new Vec4(m.values[0], m.values[1], m.values[2], m.values[3]);
-    }
-
     if (param instanceof Mat) {
       const mat = param;
       const { numRows } = this;
