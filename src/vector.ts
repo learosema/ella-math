@@ -248,7 +248,7 @@ export class Vec4 {
     public x: number,
     public y: number,
     public z: number,
-    public a: number
+    public w: number
   ) {}
 
   static fromArray(data: number[]) {
@@ -260,10 +260,10 @@ export class Vec4 {
   }
 
   toArray() {
-    return [this.x, this.y, this.z, this.a];
+    return [this.x, this.y, this.z, this.w];
   }
 
   clone() {
-    return new Vec4(this.x, this.y, this.z, this.a);
+    return new Vec4(this.x, this.y, this.z, this.w);
   }
 }
