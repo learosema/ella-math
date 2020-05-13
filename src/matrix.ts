@@ -6,7 +6,10 @@ export class Mat {
   numRows: number;
   numCols: number;
 
-  constructor(values: number[], options?: {numRows: number, numCols: number}) {
+  constructor(
+    values: number[],
+    options?: { numRows: number; numCols: number }
+  ) {
     this.values = values;
     if (options) {
       this.numRows = options.numRows;
@@ -17,7 +20,7 @@ export class Mat {
         this.numCols = this.numRows = dimension;
         return;
       }
-      throw Error('ArgumentError');
+      throw Error("ArgumentError");
     }
   }
 
@@ -32,9 +35,9 @@ export class Mat {
    */
   static fromVector(value: Vec): Mat {
     if (value instanceof Vec) {
-      return new Mat(value.toArray(), {numRows: 1, numCols: value.dim});
+      return new Mat(value.toArray(), { numRows: 1, numCols: value.dim });
     }
-    throw Error('unsupported type');
+    throw Error("unsupported type");
   }
 
   valueAt(row: number, column: number) {
@@ -78,9 +81,12 @@ export class Mat {
       const newValues: number[] = this.values.map(
         (value, i) => value + otherMatrix.values[i]
       );
-      return new Mat(newValues, {numRows: this.numRows, numCols: this.numCols});
+      return new Mat(newValues, {
+        numRows: this.numRows,
+        numCols: this.numCols,
+      });
     }
-    throw Error('ArgumentError');
+    throw Error("ArgumentError");
   }
 
   sub(otherMatrix: Mat) {
@@ -92,22 +98,28 @@ export class Mat {
       const newValues: number[] = this.values.map(
         (value, i) => value - otherMatrix.values[i]
       );
-      return new Mat(newValues, {numRows: this.numRows, numCols: this.numCols});
+      return new Mat(newValues, {
+        numRows: this.numRows,
+        numCols: this.numCols,
+      });
     }
-    throw Error('ArgumentError');
+    throw Error("ArgumentError");
   }
 
   mul(param: Mat | number | Vec): Mat | Vec {
-    if (typeof param === 'number') {
+    if (typeof param === "number") {
       const multipliedValues: number[] = this.values.map(
         (value) => value * param
       );
-      return new Mat(multipliedValues, {numRows: this.numRows, numCols: this.numCols});
+      return new Mat(multipliedValues, {
+        numRows: this.numRows,
+        numCols: this.numCols,
+      });
     }
-    if (param instanceof Vec && this.numRows === 2) {
+    if (param instanceof Vec) {
       const v = param as Vec;
-      if (param.dim !== this.numRows) {
-        throw Error('dimension mismatch');
+      if (param.dim !== this.numCols) {
+        throw Error("dimension mismatch");
       }
       const m = this.mul(Mat.fromVector(param)) as Mat;
       return new Vec(...m.values);
@@ -116,9 +128,7 @@ export class Mat {
       const mat = param;
       const { numRows } = this;
       const { numCols } = mat;
-      const multipliedValues: number[] = Array(
-        numRows * numCols
-      )
+      const multipliedValues: number[] = Array(numRows * numCols)
         .fill(0)
         .map((_, idx) => {
           const y = idx % numRows;
@@ -127,9 +137,9 @@ export class Mat {
           const col = mat.colAt(x);
           return row.map((value, i) => value * col[i]).reduce((a, b) => a + b);
         });
-      return new Mat(multipliedValues, {numRows, numCols});
+      return new Mat(multipliedValues, { numRows, numCols });
     }
-    throw Error('ArgumentError');
+    throw Error("ArgumentError");
   }
 
   determinant() {
@@ -141,12 +151,11 @@ export class Mat {
 
   toString() {
     const { numRows, numCols, values } = this;
-    return `mat${numRows}x${numCols}(${values.join(', ')})`;
+    return `mat${numRows}x${numCols}(${values.join(", ")})`;
   }
 }
 
 export const Mat2 = {
-
   /**
    * create identity matrix
    */
@@ -179,12 +188,9 @@ export const Mat2 = {
       0, sy
     ]);
   },
-
-
-}
+};
 
 export const Mat3 = {
-
   /**
    * create identity matrix
    */
@@ -262,11 +268,10 @@ export const Mat3 = {
 	   -S, C, 0,
 	    0, 0, 1
     ]);
-  }
-}
+  },
+};
 
 export const Mat4 = {
-
   identity() {
     // prettier-ignore
     return new Mat([
@@ -334,5 +339,5 @@ export const Mat4 = {
 	    0, 0, 1, 0,
 	    0, 0, 0, 1
     ]);
-  }
-}
+  },
+};
