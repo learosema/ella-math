@@ -35,7 +35,7 @@ export class Mat {
    */
   static fromVector(value: Vec): Mat {
     if (value instanceof Vec) {
-      return new Mat(value.toArray(), { numRows: 1, numCols: value.dim });
+      return new Mat(value.toArray(), { numRows: value.dim, numCols: 1 });
     }
     throw Error("unsupported type");
   }
@@ -132,7 +132,7 @@ export class Mat {
         .fill(0)
         .map((_, idx) => {
           const y = idx % numRows;
-          const x = (idx / numCols) | 0;
+          const x = (idx / numRows) | 0;
           const row = this.rowAt(y);
           const col = mat.colAt(x);
           return row.map((value, i) => value * col[i]).reduce((a, b) => a + b);

@@ -77,11 +77,11 @@ describe("generic matrix arithmetics", () => {
 
   test("matrix vector multiplication", () => {
     const m = new Mat([1, 0, -1, -3, 2, 1], { numRows: 2, numCols: 3 });
-    const v = new Vec(2, 1, 0);
+    const v = new Vec(2, 1, -5);
     const result = m.mul(v) as Vec;
     expect(result.dim).toBe(2);
-    expect(result.x).toBe(1);
-    expect(result.y).toBe(-3);
+    expect(result.x).toBe(-9);
+    expect(result.y).toBe(-8);
   });
 });
 
