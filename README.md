@@ -1,16 +1,40 @@
 # Ella
 
-Work in progress linear algebra library.
+Geometry and linear algebra library that provides basic vector and matrix calculus operations.
 
-Provides basic vector and matrix calculus operations.
+## Features
 
-Basic usage: `npm i ella-math`
+Features:
+
+- calculate vector length
+- normalize vector
+- vector addition, subtraction, scalar multiplication, dot product, cross product
+- matrix multiplication
+- translation and projection matrices
+- matrix vector multiplication
+- basic geometry shapes
+
+## Install and usage
+
+You can either import ella via NPM or directly use it via script tag.
+
+### NPM:
+
+First, run: `npm i ella-math`
 
 ```js
-import { Vec2 } from 'ella-math';
+import { Vec, Mat } from "ella-math";
 
-const a = new Vec3(1, 2, 3);
-const b = new Vec3(2, 3, 4);
+const a = new Vec(1, 2, 3);
+const b = new Vec(2, 3, 4);
 
 console.log(a.add(b));
+```
+
+### Directly in the browser
+
+Add this script tag: `<script src="https://unpkg.com/ella-math@latest/dist/ella.umd.js"></script>`
+
+```js
+const { Vec, Mat } = Ella;
 ```

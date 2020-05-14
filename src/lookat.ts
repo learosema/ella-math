@@ -1,7 +1,15 @@
 import { Vec } from "./vector";
 import { Mat } from "./matrix";
 
-// https://www.khronos.org/opengl/wiki/GluLookAt_code
+//
+/**
+ * Clone of gluLookAt
+ * @param eye position of the eye is (where you are)
+ * @param center position where you want to look at
+ * @param up it's a normalized vector, quite often (0,1,0)
+ * @returns view matrix
+ * @see https://www.khronos.org/opengl/wiki/GluLookAt_code
+ */
 export function lookAt(eye: Vec, center: Vec, up: Vec): Mat {
   const forward = eye.sub(center).normalized;
   const side = forward.cross(up).normalized;

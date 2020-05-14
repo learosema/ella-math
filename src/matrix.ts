@@ -3,29 +3,25 @@ import { Vec } from "./vector";
 /** @class Mat */
 export class Mat {
   values: number[];
-  rows: number;
-  cols: number;
+  numRows: number;
+  numCols: number;
 
   constructor(
     values: number[],
-    options?: { rows: number; cols: number }
+    options?: { numRows: number; numCols: number }
   ) {
     this.values = values;
     if (options) {
-      this.rows = options.rows;
-      this.cols = options.cols;
+      this.numRows = options.numRows;
+      this.numCols = options.numCols;
     } else {
       const dimension = Math.sqrt(values.length);
       if (Number.isInteger(dimension)) {
-        this.cols = this.rows = dimension;
+        this.numCols = this.numRows = dimension;
         return;
       }
       throw Error("ArgumentError");
     }
-  }
-
-  toArray() {
-    return this.values;
   }
 
   /**
@@ -35,32 +31,55 @@ export class Mat {
    */
   static fromVector(value: Vec): Mat {
     if (value instanceof Vec) {
-      return new Mat(value.toArray(), { rows: value.dim, cols: 1 });
+      return new Mat(value.toArray(), { numRows: value.dim, numCols: 1 });
     }
     throw Error("unsupported type");
   }
 
+  /**
+   * convert to array
+   */
+  toArray() {
+    return this.values;
+  }
+
   valueAt(row: number, column: number) {
-    return this.values[column * this.rows + row];
+    return this.values[column * this.numRows + row];
   }
 
   colAt(column: number) {
-    const { rows: numRows } = this;
+    const { numRows } = this;
     return this.values.slice(column * numRows, column * numRows + numRows);
   }
 
   rowAt(row: number) {
-    const { rows: numRows, cols: numCols } = this;
+    const { numRows, numCols } = this;
     return Array(numCols)
       .fill(0)
       .map((_, column) => this.values[column * numRows + row]);
   }
 
+  /**
+   * returns transposed matrix
+   */
+  transpose() {
+    const transposedValues: number[] = [];
+    Array(this.numRows)
+      .fill(0)
+      .map((_, i) => {
+        transposedValues.push(...this.rowAt(i));
+      });
+    return new Mat(transposedValues, {
+      numRows: this.numCols,
+      numCols: this.numRows,
+    });
+  }
+
   equals(otherMatrix: Mat) {
     if (
       this.values.length !== otherMatrix.values.length ||
-      this.cols !== otherMatrix.cols ||
-      this.rows !== otherMatrix.rows
+      this.numCols !== otherMatrix.numCols ||
+      this.numRows !== otherMatrix.numRows
     ) {
       return false;
     }
@@ -74,16 +93,16 @@ export class Mat {
 
   add(otherMatrix: Mat) {
     if (
-      this.cols === otherMatrix.cols &&
-      this.rows === otherMatrix.rows &&
+      this.numCols === otherMatrix.numCols &&
+      this.numRows === otherMatrix.numRows &&
       this.values.length === otherMatrix.values.length
     ) {
       const newValues: number[] = this.values.map(
         (value, i) => value + otherMatrix.values[i]
       );
       return new Mat(newValues, {
-        rows: this.rows,
-        cols: this.cols,
+        numRows: this.numRows,
+        numCols: this.numCols,
       });
     }
     throw Error("ArgumentError");
@@ -91,16 +110,16 @@ export class Mat {
 
   sub(otherMatrix: Mat) {
     if (
-      this.cols === otherMatrix.cols &&
-      this.rows === otherMatrix.rows &&
+      this.numCols === otherMatrix.numCols &&
+      this.numRows === otherMatrix.numRows &&
       this.values.length === otherMatrix.values.length
     ) {
       const newValues: number[] = this.values.map(
         (value, i) => value - otherMatrix.values[i]
       );
       return new Mat(newValues, {
-        rows: this.rows,
-        cols: this.cols,
+        numRows: this.numRows,
+        numCols: this.numCols,
       });
     }
     throw Error("ArgumentError");
@@ -112,13 +131,13 @@ export class Mat {
         (value) => value * param
       );
       return new Mat(multipliedValues, {
-        rows: this.rows,
-        cols: this.cols,
+        numRows: this.numRows,
+        numCols: this.numCols,
       });
     }
     if (param instanceof Vec) {
       const v = param as Vec;
-      if (param.dim !== this.cols) {
+      if (param.dim !== this.numCols) {
         throw Error("dimension mismatch");
       }
       const m = this.mul(Mat.fromVector(param)) as Mat;
@@ -126,8 +145,8 @@ export class Mat {
     }
     if (param instanceof Mat) {
       const mat = param;
-      const { rows: numRows } = this;
-      const { cols: numCols } = mat;
+      const { numRows } = this;
+      const { numCols } = mat;
       const multipliedValues: number[] = Array(numRows * numCols)
         .fill(0)
         .map((_, idx) => {
@@ -137,7 +156,7 @@ export class Mat {
           const col = mat.colAt(x);
           return row.map((value, i) => value * col[i]).reduce((a, b) => a + b);
         });
-      return new Mat(multipliedValues, { rows: numRows, cols: numCols });
+      return new Mat(multipliedValues, { numRows, numCols });
     }
     throw Error("ArgumentError");
   }
@@ -150,7 +169,7 @@ export class Mat {
   }
 
   toString() {
-    const { rows: numRows, cols: numCols, values } = this;
+    const { numRows, numCols, values } = this;
     return `mat${numRows}x${numCols}(${values.join(", ")})`;
   }
 }

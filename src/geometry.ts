@@ -1,24 +1,22 @@
-
-export type Axes = 'xy' | 'xz' | 'yz';
+export type Axes = "xy" | "xz" | "yz";
 
 /** @class Geometry */
-export default class Geometry {
-
+export class Geometry {
   /**
    * create rectangle geometry
    * @param a length of side A
    * @param b length of side B
    * @param axes
    */
-  static rect(sizeA: number, sizeB: number, axes: Axes = 'xy') {
+  static rect(sizeA: number, sizeB: number, axes: Axes = "xy") {
     const a = sizeA * 0.5;
     const b = sizeB * 0.5;
     switch (axes) {
-      case 'xy':
+      case "xy":
         return [-a, -b, 0, a, -b, 0, -a, b, 0, -a, b, 0, a, -b, 0, a, b, 0];
-      case 'xz':
+      case "xz":
         return [-a, 0, -b, a, 0, -b, -a, 0, b, -a, 0, b, a, 0, -b, a, 0, b];
-      case 'yz':
+      case "yz":
         return [0, -a, -b, 0, a, -b, 0, -a, b, 0, -a, b, 0, a, -b, 0, a, b];
     }
   }
@@ -28,7 +26,7 @@ export default class Geometry {
    * @name square
    * @param size
    */
-  static square(size: number = 1, axes: Axes = 'xy') {
+  static square(size: number = 1, axes: Axes = "xy") {
     return Geometry.rect(size, size, axes);
   }
 
@@ -143,5 +141,5 @@ export default class Geometry {
     return squares.flat();
   }
 
-
+  static sphere() {}
 }
