@@ -1,8 +1,8 @@
-import { Vec } from "./vector";
-import { Mat, Mat2 } from "./matrix";
+import { Vec } from './vector';
+import { Mat, Mat2 } from './matrix';
 
-describe("generic matrix arithmetics", () => {
-  test("2x3 matrix initialization", () => {
+describe('generic matrix arithmetics', () => {
+  test('2x3 matrix initialization', () => {
     const m = new Mat([1, 2, 3, 4, 5, 6], { numRows: 2, numCols: 3 });
     expect(m.numRows).toBe(2);
     expect(m.numCols).toBe(3);
@@ -14,7 +14,7 @@ describe("generic matrix arithmetics", () => {
     expect(m.valueAt(1, 2)).toBe(6);
   });
 
-  test("3x2 matrix rowAt and colAt", () => {
+  test('3x2 matrix rowAt and colAt', () => {
     const m = new Mat([1, 2, 3, 4, 5, 6], { numRows: 3, numCols: 2 });
     expect(m.colAt(0)).toEqual([1, 2, 3]);
     expect(m.colAt(1)).toEqual([4, 5, 6]);
@@ -24,7 +24,7 @@ describe("generic matrix arithmetics", () => {
     expect(m.rowAt(2)).toEqual([3, 6]);
   });
 
-  test("3x2 matrix equality", () => {
+  test('3x2 matrix equality', () => {
     const a = new Mat([1, 2, 3, 4, 5, 6], { numRows: 3, numCols: 2 });
     const b = new Mat([1, 2, 3, 4, 5, 6], { numRows: 3, numCols: 2 });
     const c = new Mat([1, 2, 3, 4, 5, 6], { numRows: 2, numCols: 3 });
@@ -32,7 +32,28 @@ describe("generic matrix arithmetics", () => {
     expect(!a.equals(c)).toBeTruthy();
   });
 
-  test("matrix transposition", () => {
+  test('vector to matrix', () => {
+    const a = new Vec(1, 2, 3);
+    const expected = new Mat([1, 2, 3], { numRows: 3, numCols: 1 });
+    const result = Mat.fromVector(a);
+    expect(result.equals(expected)).toBe(true);
+  });
+
+  test('vectors to matrix', () => {
+    const a = new Vec(1, 2, 3);
+    const b = new Vec(4, 5, 6);
+    const expected = new Mat([1, 4, 2, 5, 3, 6], { numRows: 3, numCols: 2 });
+    const result = Mat.fromVectors([a, b]);
+    expect(result.equals(expected)).toBe(true);
+  });
+
+  test('vectors to matrix should throw an exception when no vectors are provided', () => {
+    //@ts-ignore undefined check
+    expect(() => Mat.fromVectors(undefined)).toThrowError();
+    expect(() => Mat.fromVectors([])).toThrowError();
+  });
+
+  test('matrix transposition', () => {
     // prettier-ignore
     const a = new Mat([
       1, 2, 3, 
@@ -50,7 +71,7 @@ describe("generic matrix arithmetics", () => {
     expect(transposedTwice.equals(a)).toBe(true);
   });
 
-  test("3x2 matrix addition", () => {
+  test('3x2 matrix addition', () => {
     const a = new Mat([1, 2, 3, 4, 5, 6], { numRows: 3, numCols: 2 });
     const b = new Mat([10, 20, 30, 40, 50, 60], { numRows: 3, numCols: 2 });
     const c = a.add(b);
@@ -58,7 +79,7 @@ describe("generic matrix arithmetics", () => {
     expect(c.colAt(1)).toEqual([44, 55, 66]);
   });
 
-  test("3x2 matrix substraction", () => {
+  test('3x2 matrix substraction', () => {
     const a = new Mat([10, 20, 30, 40, 50, 60], { numRows: 3, numCols: 2 });
     const b = new Mat([1, 2, 3, 4, 5, 6], { numRows: 3, numCols: 2 });
     const c = a.sub(b);
@@ -66,7 +87,7 @@ describe("generic matrix arithmetics", () => {
     expect(c.colAt(1)).toEqual([36, 45, 54]);
   });
 
-  test("2x3 * 3x2 matrix multiplication", () => {
+  test('2x3 * 3x2 matrix multiplication', () => {
     const a = new Mat([1, 2, 3, 4, 5, 6], { numRows: 3, numCols: 2 });
 
     const b = new Mat([7, 8, -4, -2, -3, -5], { numRows: 2, numCols: 3 });
@@ -93,7 +114,7 @@ describe("generic matrix arithmetics", () => {
     expect(d.toArray()).toEqual([-10, -11, -10, -8]);
   });
 
-  test("matrix vector multiplication", () => {
+  test('matrix vector multiplication', () => {
     const m = new Mat([1, 0, -1, -3, 2, 1], { numRows: 2, numCols: 3 });
     const v = new Vec(2, 1, -5);
     const result = m.mul(v) as Vec;
@@ -103,8 +124,8 @@ describe("generic matrix arithmetics", () => {
   });
 });
 
-describe("2x2 matrix arithmetics", () => {
-  test("Mat2 identity", () => {
+describe('2x2 matrix arithmetics', () => {
+  test('Mat2 identity', () => {
     const m = Mat2.identity();
     expect(m.valueAt(0, 0)).toBe(1);
     expect(m.valueAt(1, 1)).toBe(1);
@@ -112,7 +133,7 @@ describe("2x2 matrix arithmetics", () => {
     expect(m.valueAt(0, 1)).toBe(0);
   });
 
-  test("Mat2 rowAt and colAt", () => {
+  test('Mat2 rowAt and colAt', () => {
     // prettier-ignore
     const mat = new Mat([
       1, 2, // column 1
@@ -125,19 +146,19 @@ describe("2x2 matrix arithmetics", () => {
     expect(col).toEqual([3, 4]);
   });
 
-  test("Mat2 determinant", () => {
+  test('Mat2 determinant', () => {
     const mat = new Mat([1, 2, 3, 4]);
     expect(mat.determinant()).toBe(-2);
   });
 
-  test("Mat2 multiplication with identity matrix", () => {
+  test('Mat2 multiplication with identity matrix', () => {
     const a = new Mat([2, 3, 5, 7]);
     const b = Mat2.identity() as Mat;
     const c = a.mul(b) as Mat;
     expect(a.equals(c)).toBeTruthy();
   });
 
-  test("Mat2 multiplication", () => {
+  test('Mat2 multiplication', () => {
     const a = new Mat([2, 3, 5, 7]);
     const b = new Mat([-1, 4, 6, 8]);
     const c = a.mul(b) as Mat;
@@ -149,8 +170,8 @@ describe("2x2 matrix arithmetics", () => {
     expect(c.equals(d)).toBeTruthy();
   });
 
-  test("Mat2 toString()", () => {
+  test('Mat2 toString()', () => {
     const a = new Mat([2, 3, 5, 7]);
-    expect(a.toString()).toBe("mat2x2(2, 3, 5, 7)");
+    expect(a.toString()).toBe('mat2x2(2, 3, 5, 7)');
   });
 });

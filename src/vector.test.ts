@@ -106,7 +106,6 @@ describe('3D Vector arithmetics', () => {
     expect(vector.z).toBe(3);
   });
 
-
   test('Vec fromNumber factory', () => {
     const vector = Vec.fromNumber(3, 3);
     expect(vector.x).toBe(3);

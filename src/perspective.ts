@@ -1,4 +1,4 @@
-import { Mat } from "./matrix";
+import { Mat } from './matrix';
 
 /**
  * creates a transformation that produces a parallel projection

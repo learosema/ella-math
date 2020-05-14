@@ -1,16 +1,25 @@
-// idea: provide a single Vector class instead of Vec2, Vec3, Vec4
 export class Vec {
   readonly values: number[];
-  
+
   constructor(...values: number[]) {
     this.values = values;
   }
 
-  get dim() { return this.values.length }
-  get x() { return this.values[0]; }
-  get y() { return this.values[1]; }
-  get z() { return this.values[2]; }
-  get w() { return this.values[3]; }
+  get dim() {
+    return this.values.length;
+  }
+  get x() {
+    return this.values[0];
+  }
+  get y() {
+    return this.values[1];
+  }
+  get z() {
+    return this.values[2];
+  }
+  get w() {
+    return this.values[3];
+  }
 
   /**
    * Create vector from Array
@@ -45,7 +54,6 @@ export class Vec {
     return new Vec(...this.values.map((v, idx) => v + otherVec.values[idx]));
   }
 
-  
   /**
    * sub vector
    * @param otherVec addend
@@ -61,7 +69,7 @@ export class Vec {
    * @returns multiplication result
    */
   mul(value: number): Vec {
-    return new Vec(...this.values.map(v => v * value));
+    return new Vec(...this.values.map((v) => v * value));
   }
 
   /**
@@ -70,23 +78,27 @@ export class Vec {
    * @returns multiplication result
    */
   div(value: number): Vec {
-    return new Vec(...this.values.map(x => x / value));
+    return new Vec(...this.values.map((x) => x / value));
   }
 
   /**
    * dot product
-   * @param otherVec 
+   * @param otherVec
    */
   dot(otherVec: Vec): number {
-    return this.values.map((x, idx) => x * otherVec.values[idx]).reduce((a, b) => a + b);
+    return this.values
+      .map((x, idx) => x * otherVec.values[idx])
+      .reduce((a, b) => a + b);
   }
 
   /**
    * check for equality
-   * @param otherVec 
+   * @param otherVec
    */
   equals(otherVec: Vec): boolean {
-    return this.values.map((v, idx) => v === otherVec.values[idx]).reduce((a, b) => a === b);
+    return this.values
+      .map((v, idx) => v === otherVec.values[idx])
+      .reduce((a, b) => a === b);
   }
 
   /**
@@ -142,5 +154,4 @@ export class Vec {
   get normalized() {
     return this.div(this.length);
   }
-
 }

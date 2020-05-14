@@ -6,10 +6,10 @@ Geometry and linear algebra library that provides basic vector and matrix calcul
 
 Features:
 
+- vector addition, subtraction, scalar multiplication, dot product, cross product
 - calculate vector length
 - normalize vector
-- vector addition, subtraction, scalar multiplication, dot product, cross product
-- matrix multiplication
+- matrix multiplication, determinant,
 - translation and projection matrices
 - matrix vector multiplication
 - basic geometry shapes
@@ -23,7 +23,7 @@ You can either import ella via NPM or directly use it via script tag.
 First, run: `npm i ella-math`
 
 ```js
-import { Vec, Mat } from "ella-math";
+import { Vec, Mat } from 'ella-math';
 
 const a = new Vec(1, 2, 3);
 const b = new Vec(2, 3, 4);

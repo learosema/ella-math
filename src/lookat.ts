@@ -1,9 +1,8 @@
-import { Vec } from "./vector";
-import { Mat } from "./matrix";
+import { Vec } from './vector';
+import { Mat } from './matrix';
 
-//
 /**
- * Clone of gluLookAt
+ * Create a view matrix
  * @param eye position of the eye is (where you are)
  * @param center position where you want to look at
  * @param up it's a normalized vector, quite often (0,1,0)

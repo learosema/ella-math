@@ -1,4 +1,4 @@
-import { Vec } from "./vector";
+import { Vec } from './vector';
 
 /** @class Mat */
 export class Mat {
@@ -20,12 +20,12 @@ export class Mat {
         this.numCols = this.numRows = dimension;
         return;
       }
-      throw Error("ArgumentError");
+      throw Error('ArgumentError');
     }
   }
 
   /**
-   * Converts a vector into a 1x(2|3|4) matrix with 1 row and n cols
+   * Converts a vector with dimension n into a matrix with 1 col and n rows
    * useful for matrix multiplication
    * @param value the input vector
    */
@@ -33,7 +33,29 @@ export class Mat {
     if (value instanceof Vec) {
       return new Mat(value.toArray(), { numRows: value.dim, numCols: 1 });
     }
-    throw Error("unsupported type");
+    throw Error('unsupported type');
+  }
+
+  /**
+   * Converts a bunch of vectors into a matrix
+   */
+  static fromVectors(vectors: Vec[]): Mat {
+    if (!vectors || vectors.length === 0) {
+      throw Error('Argument error.');
+    }
+    const dimensions: number[] = vectors.map((v) => v.dim);
+    const dimensionsMatch = dimensions.every((x) => x === dimensions[0]);
+    const dimension = dimensions[0];
+    if (!dimensionsMatch) {
+      throw Error('Dimensions mismatch.');
+    }
+    const matrix: number[] = Array(dimension * vectors.length);
+    for (let i = 0; i < vectors.length; i++) {
+      for (let j = 0; j < dimension; j++) {
+        matrix[i + j * vectors.length] = vectors[i].values[j];
+      }
+    }
+    return new Mat(matrix, { numRows: dimension, numCols: vectors.length });
   }
 
   /**
@@ -105,7 +127,7 @@ export class Mat {
         numCols: this.numCols,
       });
     }
-    throw Error("ArgumentError");
+    throw Error('ArgumentError');
   }
 
   sub(otherMatrix: Mat) {
@@ -122,11 +144,11 @@ export class Mat {
         numCols: this.numCols,
       });
     }
-    throw Error("ArgumentError");
+    throw Error('ArgumentError');
   }
 
   mul(param: Mat | number | Vec): Mat | Vec {
-    if (typeof param === "number") {
+    if (typeof param === 'number') {
       const multipliedValues: number[] = this.values.map(
         (value) => value * param
       );
@@ -138,7 +160,7 @@ export class Mat {
     if (param instanceof Vec) {
       const v = param as Vec;
       if (param.dim !== this.numCols) {
-        throw Error("dimension mismatch");
+        throw Error('dimension mismatch');
       }
       const m = this.mul(Mat.fromVector(param)) as Mat;
       return new Vec(...m.values);
@@ -158,7 +180,7 @@ export class Mat {
         });
       return new Mat(multipliedValues, { numRows, numCols });
     }
-    throw Error("ArgumentError");
+    throw Error('ArgumentError');
   }
 
   determinant() {
@@ -170,7 +192,7 @@ export class Mat {
 
   toString() {
     const { numRows, numCols, values } = this;
-    return `mat${numRows}x${numCols}(${values.join(", ")})`;
+    return `mat${numRows}x${numCols}(${values.join(', ')})`;
   }
 }
 

@@ -1,24 +1,66 @@
-export type Axes = "xy" | "xz" | "yz";
+import { Vec } from './ella';
+
+export type Axes = 'xy' | 'xz' | 'yz';
 
 /** @class Geometry */
 export class Geometry {
+  constructor(
+    public vertices: Vec[],
+    public faces: number[][],
+    public normals: Vec[],
+    public texCoords: Vec[]
+  ) {}
+
+  /**
+   * converts to triangle array
+   */
+  toTriangles() {
+    // TODO: check if correct, I'm super tired
+    const { faces, vertices } = this;
+    return faces
+      .map((f) => {
+        if (f.length === 3) {
+          return f.map((vertexIndex) => vertices[vertexIndex]);
+        }
+        if (f.length === 4) {
+          const q = f.map((vertexIndex) => vertices[vertexIndex]);
+          return [q[0], q[1], q[3], q[3], q[1], q[2]];
+        }
+      })
+      .flat()
+      .map((v) => v.toArray())
+      .flat();
+  }
+
   /**
    * create rectangle geometry
    * @param a length of side A
    * @param b length of side B
    * @param axes
    */
-  static rect(sizeA: number, sizeB: number, axes: Axes = "xy") {
+  static rect(sizeA: number, sizeB: number, axes: Axes = 'xy') {
     const a = sizeA * 0.5;
     const b = sizeB * 0.5;
     switch (axes) {
-      case "xy":
+      case 'xy':
         return [-a, -b, 0, a, -b, 0, -a, b, 0, -a, b, 0, a, -b, 0, a, b, 0];
-      case "xz":
+      case 'xz':
         return [-a, 0, -b, a, 0, -b, -a, 0, b, -a, 0, b, a, 0, -b, a, 0, b];
-      case "yz":
+      case 'yz':
         return [0, -a, -b, 0, a, -b, 0, -a, b, 0, -a, b, 0, a, -b, 0, a, b];
     }
+  }
+
+  static tri(a: Vec, b: Vec, c: Vec) {
+    return [a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z];
+  }
+
+  static quad(a: Vec, b: Vec, c: Vec, d: Vec) {
+    // a----b
+    // |    |
+    // d----c
+    //
+    return [...Geometry.tri(a, b, d), ...Geometry.tri(d, b, c)];
   }
 
   /**
@@ -26,7 +68,7 @@ export class Geometry {
    * @name square
    * @param size
    */
-  static square(size: number = 1, axes: Axes = "xy") {
+  static square(size: number = 1, axes: Axes = 'xy') {
     return Geometry.rect(size, size, axes);
   }
 
@@ -141,5 +183,73 @@ export class Geometry {
     return squares.flat();
   }
 
-  static sphere() {}
+  /**
+   * Create sphere geometry
+   * @param r radius
+   * @param sides number of sides (around the sphere)
+   * @param segments number of segments (from top to bottom)
+   * @see adapted from https://vorg.github.io/pex/docs/pex-gen/Sphere.html
+   */
+  static sphere(r = 0.5, sides = 36, segments = 18) {
+    const vertices = [];
+    const texCoords = [];
+    const normals = [];
+    const faces = [];
+
+    const dphi = 360 / sides;
+    const dtheta = 180 / segments;
+
+    const evalPos = (theta: number, phi: number) => {
+      const deg = Math.PI / 180.0;
+      var pos = new Vec(
+        r * Math.sin(theta * deg) * Math.sin(phi * deg),
+        r * Math.cos(theta * deg),
+        r * Math.sin(theta * deg) * Math.cos(phi * deg)
+      );
+      return pos;
+    };
+
+    for (let segment = 0; segment <= segments; segment++) {
+      const theta = segment * dtheta;
+      for (let side = 0; side <= sides; side++) {
+        const phi = side * dphi;
+        const pos = evalPos(theta, phi);
+        const normal = pos.clone().normalized;
+        const texCoord = new Vec(phi / 360.0, theta / 180.0);
+
+        vertices.push(pos);
+        normals.push(normal);
+        texCoords.push(texCoord);
+
+        if (segment === segments) continue;
+        if (side === sides) continue;
+
+        if (segment == 0) {
+          // first segment uses triangles
+          faces.push([
+            segment * (sides + 1) + side,
+            (segment + 1) * (sides + 1) + side,
+            (segment + 1) * (sides + 1) + side + 1,
+          ]);
+        } else if (segment == segments - 1) {
+          // last segment also uses triangles
+          faces.push([
+            segment * (sides + 1) + side,
+            (segment + 1) * (sides + 1) + side + 1,
+            segment * (sides + 1) + side + 1,
+          ]);
+        } else {
+          // A --- B
+          // D --- C
+          faces.push([
+            segment * (sides + 1) + side,
+            (segment + 1) * (sides + 1) + side,
+            (segment + 1) * (sides + 1) + side + 1,
+            segment * (sides + 1) + side + 1,
+          ]);
+        }
+      }
+    }
+    return new Geometry(vertices, faces, normals, texCoords);
+  }
 }
