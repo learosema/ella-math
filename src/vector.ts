@@ -21,6 +21,22 @@ export class Vec {
     return this.values[3];
   }
 
+  get xy() {
+    return new Vec(this.values[0], this.values[1]);
+  }
+
+  get xz() {
+    return new Vec(this.values[0], this.values[2]);
+  }
+
+  get yz() {
+    return new Vec(this.values[1], this.values[2]);
+  }
+
+  get xyz() {
+    return new Vec(this.values[0], this.values[1], this.values[2]);
+  }
+
   /**
    * Create vector from Array
    * @param arr array of numbers
@@ -105,16 +121,7 @@ export class Vec {
    * Calculate length
    */
   get length() {
-    if (this.dim === 1) {
-      return this.x;
-    }
-    if (this.dim === 2) {
-      return Math.sqrt(this.x ** 2 + this.y ** 2);
-    }
-    if (this.dim === 3) {
-      return Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2);
-    }
-    throw Error('dimension not supported');
+    return Math.sqrt(this.values.map((v) => v ** 2).reduce((a, b) => a + b));
   }
 
   /**
