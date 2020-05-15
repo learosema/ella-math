@@ -18,58 +18,18 @@ export class Geometry {
     // TODO: check if correct, I'm super tired
     const { faces, vertices } = this;
     return faces
-      .map((f) => {
-        if (f.length === 3) {
-          return f.map((vertexIndex) => vertices[vertexIndex]);
+      .map((face) => {
+        if (face.length === 3) {
+          return face.map((vertexIndex) => vertices[vertexIndex]);
         }
-        if (f.length === 4) {
-          const q = f.map((vertexIndex) => vertices[vertexIndex]);
+        if (face.length === 4) {
+          const q = face.map((vertexIndex) => vertices[vertexIndex]);
           return [q[0], q[1], q[3], q[3], q[1], q[2]];
         }
       })
       .flat()
       .map((v) => v.toArray())
       .flat();
-  }
-
-  /**
-   * create rectangle geometry
-   * @param a length of side A
-   * @param b length of side B
-   * @param axes
-   */
-  static rect(sizeA: number, sizeB: number, axes: Axes = 'xy') {
-    const a = sizeA * 0.5;
-    const b = sizeB * 0.5;
-    switch (axes) {
-      case 'xy':
-        return [-a, -b, 0, a, -b, 0, -a, b, 0, -a, b, 0, a, -b, 0, a, b, 0];
-      case 'xz':
-        return [-a, 0, -b, a, 0, -b, -a, 0, b, -a, 0, b, a, 0, -b, a, 0, b];
-      case 'yz':
-        return [0, -a, -b, 0, a, -b, 0, -a, b, 0, -a, b, 0, a, -b, 0, a, b];
-    }
-  }
-
-  static tri(a: Vec, b: Vec, c: Vec) {
-    return [a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z];
-  }
-
-  static quad(a: Vec, b: Vec, c: Vec, d: Vec) {
-    // a----b
-    // |    |
-    // d----c
-    //
-    return [...Geometry.tri(a, b, d), ...Geometry.tri(d, b, c)];
-  }
-
-  /**
-   * Create square geometry (2 triangles) *
-   * @name square
-   * @param size
-   */
-  static square(size: number = 1, axes: Axes = 'xy') {
-    return Geometry.rect(size, size, axes);
   }
 
   /**
@@ -94,7 +54,7 @@ export class Geometry {
       [a, -b, c],
       [-a, b, c],
       [a, b, c],
-    ];
+    ].map((v) => new Vec(...v));
     //     0______1
     //   4/|____5/|
     //   |2|____|_|3
@@ -121,11 +81,8 @@ export class Geometry {
       [2, 3, 6],
       [6, 3, 7],
     ];
-    const result = faces
-      .flat()
-      .map((vertexIndex: number) => vertices[vertexIndex])
-      .flat();
-    return result;
+    // TODO: https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal
+    return new Geometry(vertices, faces, [], []);
   }
 
   /**
@@ -208,7 +165,7 @@ export class Geometry {
       );
       return pos;
     };
-
+    // TODO: only use triangle faces.
     for (let segment = 0; segment <= segments; segment++) {
       const theta = segment * dtheta;
       for (let side = 0; side <= sides; side++) {
