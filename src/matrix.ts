@@ -24,6 +24,17 @@ export class Mat {
     }
   }
 
+  static identity(dimension: number) {
+    if (dimension <= 0 || !Number.isInteger(dimension)) {
+      throw Error('ArgumentError');
+    }
+    return new Mat(
+      Array(dimension ** 2)
+        .fill(0)
+        .map((_, i) => (i % dimension === ((i / dimension) | 0) ? 1 : 0))
+    );
+  }
+
   /**
    * Converts a vector with dimension n into a matrix with 1 col and n rows
    * useful for matrix multiplication
@@ -184,10 +195,30 @@ export class Mat {
   }
 
   determinant() {
-    const { values } = this;
-    if (values.length === 4) {
-      return values[0] * values[3] - values[1] * values[2];
+    const { numRows, numCols } = this;
+    const v = this.values;
+    if (numRows !== numCols) {
+      throw Error('ArgumentError');
     }
+    if (numRows === 2) {
+      return v[0] * v[3] - v[1] * v[2];
+    }
+    if (numRows === 3) {
+      // a0 d1 g2
+      // b3 e4 h5
+      // c6 f7 i8
+      // aei + bfg + cdh
+      //-gec - hfa - idb
+      return (
+        v[0] * v[4] * v[8] +
+        v[3] * v[7] * v[2] +
+        v[6] * v[1] * v[5] -
+        v[2] * v[4] * v[6] -
+        v[5] * v[7] * v[0] -
+        v[8] * v[1] * v[3]
+      );
+    }
+    throw Error('NotImplementedYet');
   }
 
   toString() {
@@ -197,17 +228,6 @@ export class Mat {
 }
 
 export const Mat2 = {
-  /**
-   * create identity matrix
-   */
-  identity() {
-    // prettier-ignore
-    return new Mat([
-      1, 0, // column1
-      0, 1  // column2
-    ]);
-  },
-
   /**
    * create rotation matrix
    * @param angle angle in radians
@@ -232,18 +252,6 @@ export const Mat2 = {
 };
 
 export const Mat3 = {
-  /**
-   * create identity matrix
-   */
-  identity() {
-    // prettier-ignore
-    return new Mat([
-      1, 0, 0, 
-      0, 1, 0,
-      0, 0, 1
-    ]);
-  },
-
   /**
    * create translation matrix
    * @param x translation in x-direction

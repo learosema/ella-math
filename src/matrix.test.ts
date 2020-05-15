@@ -114,6 +114,11 @@ describe('generic matrix arithmetics', () => {
     expect(d.toArray()).toEqual([-10, -11, -10, -8]);
   });
 
+  test('mat3 determinant', () => {
+    const m = new Mat([2, 3, 1, 5, -3, 4, 2, 1, -4]);
+    expect(m.determinant()).toBe(111);
+  });
+
   test('matrix vector multiplication', () => {
     const m = new Mat([1, 0, -1, -3, 2, 1], { numRows: 2, numCols: 3 });
     const v = new Vec(2, 1, -5);
@@ -126,7 +131,7 @@ describe('generic matrix arithmetics', () => {
 
 describe('2x2 matrix arithmetics', () => {
   test('Mat2 identity', () => {
-    const m = Mat2.identity();
+    const m = Mat.identity(2);
     expect(m.valueAt(0, 0)).toBe(1);
     expect(m.valueAt(1, 1)).toBe(1);
     expect(m.valueAt(1, 0)).toBe(0);
@@ -153,7 +158,7 @@ describe('2x2 matrix arithmetics', () => {
 
   test('Mat2 multiplication with identity matrix', () => {
     const a = new Mat([2, 3, 5, 7]);
-    const b = Mat2.identity() as Mat;
+    const b = Mat.identity(2) as Mat;
     const c = a.mul(b) as Mat;
     expect(a.equals(c)).toBeTruthy();
   });
