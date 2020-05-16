@@ -71,9 +71,9 @@ export class Vec {
   }
 
   /**
-   * sub vector
+   * subtract vector
    * @param otherVec addend
-   * @returns addition result
+   * @returns subtraction result
    */
   sub(otherVec: Vec): Vec {
     return new Vec(...this.values.map((v, idx) => v - otherVec.values[idx]));

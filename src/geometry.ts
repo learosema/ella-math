@@ -15,7 +15,6 @@ export class Geometry {
    * converts to triangle array
    */
   toTriangles() {
-    // TODO: check if correct, I'm super tired
     const { faces, vertices } = this;
     return faces
       .map((face) => {
@@ -30,6 +29,16 @@ export class Geometry {
       .flat()
       .map((v) => v.toArray())
       .flat();
+  }
+
+  static calculateSurfaceNormal(p1: Vec, p2: Vec, p3: Vec): Vec {
+    const u = p2.sub(p1);
+    const v = p3.sub(p1);
+    return new Vec(
+      u.x * v.z - u.z * v.y,
+      u.z * v.x - u.x * v.z,
+      u.x * v.y - u.y * v.x
+    );
   }
 
   /**
@@ -81,8 +90,14 @@ export class Geometry {
       [2, 3, 6],
       [6, 3, 7],
     ];
-    // TODO: https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal
-    return new Geometry(vertices, faces, [], []);
+    const normals = faces.map((f) =>
+      Geometry.calculateSurfaceNormal(
+        vertices[f[0]],
+        vertices[f[1]],
+        vertices[f[2]]
+      )
+    );
+    return new Geometry(vertices, faces, normals, []);
   }
 
   /**
