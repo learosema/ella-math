@@ -1,5 +1,5 @@
 import { Vec } from './vector';
-import { Mat, Mat2 } from './matrix';
+import { Mat } from './matrix';
 
 describe('generic matrix arithmetics', () => {
   test('2x3 matrix initialization', () => {

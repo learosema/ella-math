@@ -27,17 +27,17 @@
   "homepage": "https://github.com/terabaud/ella#readme",
   "dependencies": {
     "@rollup/plugin-typescript": "^4.1.1",
-    "rollup": "^2.10.0"
+    "rollup": "^2.10.3"
   },
   "devDependencies": {
-    "@types/jest": "^25.2.2",
+    "@types/jest": "^25.2.3",
     "husky": "^4.2.5",
     "jest": "^26.0.1",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
-    "ts-jest": "^25.5.1",
+    "ts-jest": "^26.0.0",
     "tslib": "^2.0.0",
-    "typedoc": "^0.17.6",
+    "typedoc": "^0.17.7",
     "typescript": "^3.9.2"
   },
   "husky": {

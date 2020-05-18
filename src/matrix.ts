@@ -169,7 +169,6 @@ export class Mat {
       });
     }
     if (param instanceof Vec) {
-      const v = param as Vec;
       if (param.dim !== this.numCols) {
         throw Error('dimension mismatch');
       }
