@@ -1,4 +1,4 @@
-import { Vec2, Vec3, Vec4 } from "./vector";
+import { Vec } from './vector';
 
 /** @class Mat */
 export class Mat {
@@ -6,15 +6,14 @@ export class Mat {
   numRows: number;
   numCols: number;
 
-  constructor(...values: (string | number)[]) {
-    const MxN =
-      typeof values[0] === 'string' && /^\d+x\d+$/.test(values[0])
-        ? values[0].split('x').map((num) => parseInt(num, 10))
-        : null;
-    this.values = (MxN !== null ? values.slice(1) : values) as number[];
-    if (MxN !== null && MxN[0] > 0 && MxN[1] > 0) {
-      this.numRows = MxN[0];
-      this.numCols = MxN[1];
+  constructor(
+    values: number[],
+    options?: { numRows: number; numCols: number }
+  ) {
+    this.values = values;
+    if (options) {
+      this.numRows = options.numRows;
+      this.numCols = options.numCols;
     } else {
       const dimension = Math.sqrt(values.length);
       if (Number.isInteger(dimension)) {
@@ -25,33 +24,56 @@ export class Mat {
     }
   }
 
-  toArray() {
-    const { numRows, numCols, values } = this;
-    if (numCols !== numRows) {
-      return [`${numRows}x${numCols}`, ...values];
+  static identity(dimension: number) {
+    if (dimension <= 0 || !Number.isInteger(dimension)) {
+      throw Error('ArgumentError');
     }
-    return this.values;
-  }
-
-  static fromArray(values: (string | number)[]) {
-    return new Mat(...values);
+    return new Mat(
+      Array(dimension ** 2)
+        .fill(0)
+        .map((_, i) => (i % dimension === ((i / dimension) | 0) ? 1 : 0))
+    );
   }
 
   /**
-   * Converts a vector into a 1x(2|3|4) matrix
+   * Converts a vector with dimension n into a matrix with 1 col and n rows
+   * useful for matrix multiplication
    * @param value the input vector
    */
-  static fromVector(value: Vec2| Vec3 | Vec4): Mat {
-    if (value instanceof Vec2) {
-      return Mat.fromArray(['1x2', ...value.toArray()])
-    }
-    if (value instanceof Vec3) {
-      return Mat.fromArray(['1x3', ...value.toArray()])
-    }
-    if (value instanceof Vec4) {
-      return Mat.fromArray(['1x4', ...value.toArray()])
+  static fromVector(value: Vec): Mat {
+    if (value instanceof Vec) {
+      return new Mat(value.toArray(), { numRows: value.dim, numCols: 1 });
     }
     throw Error('unsupported type');
+  }
+
+  /**
+   * Converts a bunch of vectors into a matrix
+   */
+  static fromVectors(vectors: Vec[]): Mat {
+    if (!vectors || vectors.length === 0) {
+      throw Error('Argument error.');
+    }
+    const dimensions: number[] = vectors.map((v) => v.dim);
+    const dimensionsMatch = dimensions.every((x) => x === dimensions[0]);
+    const dimension = dimensions[0];
+    if (!dimensionsMatch) {
+      throw Error('Dimensions mismatch.');
+    }
+    const matrix: number[] = Array(dimension * vectors.length);
+    for (let i = 0; i < vectors.length; i++) {
+      for (let j = 0; j < dimension; j++) {
+        matrix[i + j * vectors.length] = vectors[i].values[j];
+      }
+    }
+    return new Mat(matrix, { numRows: dimension, numCols: vectors.length });
+  }
+
+  /**
+   * convert to array
+   */
+  toArray() {
+    return this.values;
   }
 
   valueAt(row: number, column: number) {
@@ -68,6 +90,22 @@ export class Mat {
     return Array(numCols)
       .fill(0)
       .map((_, column) => this.values[column * numRows + row]);
+  }
+
+  /**
+   * returns transposed matrix
+   */
+  transpose() {
+    const transposedValues: number[] = [];
+    Array(this.numRows)
+      .fill(0)
+      .map((_, i) => {
+        transposedValues.push(...this.rowAt(i));
+      });
+    return new Mat(transposedValues, {
+      numRows: this.numCols,
+      numCols: this.numRows,
+    });
   }
 
   equals(otherMatrix: Mat) {
@@ -92,13 +130,13 @@ export class Mat {
       this.numRows === otherMatrix.numRows &&
       this.values.length === otherMatrix.values.length
     ) {
-      const newValues: (string | number)[] = this.values.map(
+      const newValues: number[] = this.values.map(
         (value, i) => value + otherMatrix.values[i]
       );
-      if (this.numRows !== this.numCols) {
-        newValues.unshift(`${this.numRows}x${this.numCols}`);
-      }
-      return Mat.fromArray(newValues);
+      return new Mat(newValues, {
+        numRows: this.numRows,
+        numCols: this.numCols,
+      });
     }
     throw Error('ArgumentError');
   }
@@ -109,51 +147,77 @@ export class Mat {
       this.numRows === otherMatrix.numRows &&
       this.values.length === otherMatrix.values.length
     ) {
-      const newValues: (string | number)[] = this.values.map(
+      const newValues: number[] = this.values.map(
         (value, i) => value - otherMatrix.values[i]
       );
-      if (this.numRows !== this.numCols) {
-        newValues.unshift(`${this.numRows}x${this.numCols}`);
-      }
-      return Mat.fromArray(newValues);
+      return new Mat(newValues, {
+        numRows: this.numRows,
+        numCols: this.numCols,
+      });
     }
     throw Error('ArgumentError');
   }
 
-  mul(param: Mat | number | Vec2 | Vec3 | Vec4): Mat {
+  mul(param: Mat | number | Vec): Mat | Vec {
     if (typeof param === 'number') {
-      const multipliedValues: (string | number)[] = this.values.map(
+      const multipliedValues: number[] = this.values.map(
         (value) => value * param
       );
-      if (this.numRows !== this.numCols) {
-        multipliedValues.unshift(`${this.numRows}x${this.numCols}`);
-      }
-      return Mat.fromArray(multipliedValues);
+      return new Mat(multipliedValues, {
+        numRows: this.numRows,
+        numCols: this.numCols,
+      });
     }
-    if (param instanceof Vec2 || param instanceof Vec3 || param instanceof Vec4) {
-      return this.mul(Mat.fromVector(param));
+    if (param instanceof Vec) {
+      if (param.dim !== this.numCols) {
+        throw Error('dimension mismatch');
+      }
+      const m = this.mul(Mat.fromVector(param)) as Mat;
+      return new Vec(...m.values);
     }
     if (param instanceof Mat) {
       const mat = param;
       const { numRows } = this;
       const { numCols } = mat;
-      const multipliedValues: (string | number)[] = Array<string | number>(
-        numRows * numCols
-      )
+      const multipliedValues: number[] = Array(numRows * numCols)
         .fill(0)
         .map((_, idx) => {
           const y = idx % numRows;
-          const x = (idx / numCols) | 0;
+          const x = (idx / numRows) | 0;
           const row = this.rowAt(y);
           const col = mat.colAt(x);
           return row.map((value, i) => value * col[i]).reduce((a, b) => a + b);
         });
-      if (numRows !== numCols) {
-        multipliedValues.unshift(`${numRows}x${numCols}`);
-      }
-      return Mat.fromArray(multipliedValues);
+      return new Mat(multipliedValues, { numRows, numCols });
     }
     throw Error('ArgumentError');
+  }
+
+  determinant() {
+    const { numRows, numCols } = this;
+    const v = this.values;
+    if (numRows !== numCols) {
+      throw Error('ArgumentError');
+    }
+    if (numRows === 2) {
+      return v[0] * v[3] - v[1] * v[2];
+    }
+    if (numRows === 3) {
+      // a0 d1 g2
+      // b3 e4 h5
+      // c6 f7 i8
+      // aei + bfg + cdh
+      //-gec - hfa - idb
+      return (
+        v[0] * v[4] * v[8] +
+        v[3] * v[7] * v[2] +
+        v[6] * v[1] * v[5] -
+        v[2] * v[4] * v[6] -
+        v[5] * v[7] * v[0] -
+        v[8] * v[1] * v[3]
+      );
+    }
+    throw Error('NotImplementedYet');
   }
 
   toString() {
@@ -162,118 +226,45 @@ export class Mat {
   }
 }
 
-export class Mat2 extends Mat {
-  constructor(...values: number[]) {
-    if (values.length !== 4) {
-      throw Error('invalid argument');
-    }
-    super(...values);
-    this.numRows = 2;
-    this.numCols = 2;
-  }
-
-  toArray() {
-    return this.values;
-  }
-
-  static fromArray(values: number[]) {
-    return new Mat2(...values);
-  }
-
-  /**
-   * create identity matrix
-   */
-  static identity() {
-    // prettier-ignore
-    return new Mat2(
-      1, 0, // column1
-      0, 1  // column2
-    );
-  }
-
+export const Mat2 = {
   /**
    * create rotation matrix
    * @param angle angle in radians
    */
-  static rotation(angle: number) {
+  rotation(angle: number): Mat {
     const S = Math.sin(angle);
     const C = Math.cos(angle);
     // prettier-ignore
-    return new Mat2(
+    return new Mat([
        C, S, 
       -S, C
-    );
-  }
+    ]);
+  },
 
-  static scaling(sx: number, sy: number) {
+  scaling(sx: number, sy: number): Mat {
     // prettier-ignore
-    return new Mat2(
+    return new Mat([
       sx, 0, 
       0, sy
-    );
-  }
+    ]);
+  },
+};
 
-  determinant() {
-    const { values } = this;
-    return values[0] * values[3] - values[1] * values[2];
-  }
-
-  toString() {
-    return `mat2(${this.values.join(', ')})`;
-  }
-}
-
-export class Mat3 extends Mat {
-  constructor(...values: number[]) {
-    if (values.length !== 9) {
-      throw Error('invalid argument');
-    }
-    super(...values);
-    this.numCols = 3;
-    this.numRows = 3;
-  }
-
-  /**
-   * convert to array
-   */
-  toArray() {
-    return this.values;
-  }
-
-  /**
-   * create from array
-   * @param values array of values
-   */
-  static fromArray(values: number[]) {
-    return new Mat4(...values);
-  }
-
-  /**
-   * create identity matrix
-   */
-  static identity() {
-    // prettier-ignore
-    return new Mat3(
-      1, 0, 0, 
-      0, 1, 0,
-      0, 0, 1
-    );
-  }
-
+export const Mat3 = {
   /**
    * create translation matrix
    * @param x translation in x-direction
    * @param y translation in y-direction
    * @returns 3x3 translation matrix
    */
-  static translation(x: number, y: number) {
+  translation(x: number, y: number): Mat {
     // prettier-ignore
-    return new Mat3(
+    return new Mat([
       1, 0, 0,
       0, 1, 0,
       x, y, 1
-    );
-  }
+    ]);
+  },
 
   /**
    * create scaling matrix
@@ -282,140 +273,119 @@ export class Mat3 extends Mat {
    * @param sz
    * @returns 3x3 scale matrix
    */
-  static scaling(sx: number, sy: number, sz: number): Mat3 {
+  scaling(sx: number, sy: number, sz: number): Mat {
     // prettier-ignore
-    return new Mat3(
+    return new Mat([
       sx,  0,  0, 
        0, sy,  0, 
        0,  0, sz
-    );
-  }
+    ]);
+  },
 
-  static rotX(angle: number) {
+  rotX(angle: number): Mat {
     const { sin, cos } = Math;
     const S = sin(angle);
     const C = cos(angle);
     // prettier-ignore
-    return new Mat3(
+    return new Mat([
       1, 0, 0,
       0, C, S,
       0,-S, C
-    );
-  }
+    ]);
+  },
 
-  static rotY(angle: number) {
+  rotY(angle: number): Mat {
     const { sin, cos } = Math;
     const S = sin(angle);
     const C = cos(angle);
     // prettier-ignore
-    return new Mat3(
+    return new Mat([
       C, 0,-S,
       0, 1, 0,
       S, 0, C
-    );
-  }
+    ]);
+  },
 
-  static rotZ(angle: number) {
+  rotZ(angle: number): Mat {
     const { sin, cos } = Math;
     const S = sin(angle);
     const C = cos(angle);
     // prettier-ignore
-    return new Mat4(
+    return new Mat([
       C, S, 0,
 	   -S, C, 0,
 	    0, 0, 1
-    );
-  }
-}
+    ]);
+  },
+};
 
-export class Mat4 extends Mat {
-  constructor(...values: number[]) {
-    // input is like in glsl mat4:
-    // column0: row 0, row 1, row 2, row 3
-    // column1: row 0, row 1, row 2, row 3
-    // column2: row 0, row 1, row 2, row 3
-    // column3: row 0, row 1, row 2, row 3
-    if (values.length !== 16) {
-      throw Error('invalid argument');
-    }
-    super(...values);
-    this.numCols = 4;
-    this.numRows = 4;
-  }
-
-  toArray() {
-    return this.values;
-  }
-
-  static fromArray(values: number[]) {
-    return new Mat4(...values);
-  }
-
-  static identity() {
+export const Mat4 = {
+  identity() {
     // prettier-ignore
-    return new Mat4(
+    return new Mat([
       1, 0, 0, 0,
       0, 1, 0, 0,
       0, 0, 1, 0,
-      0, 0, 0, 1);
-  }
+      0, 0, 0, 1
+    ]);
+  },
 
-  static translation(x: number, y: number, z: number) {
+  translation(x: number, y: number, z: number): Mat {
     // prettier-ignore
-    return new Mat4(
+    return new Mat([
       1, 0, 0, 0,
       0, 1, 0, 0,
       0, 0, 1, 0,
       x, y, z, 1
-    );
-  }
+    ]);
+  },
 
-  static scaling(sx: number, sy: number, sz: number) {
+  scaling(sx: number, sy: number, sz: number): Mat {
     // prettier-ignore
-    return new Mat4(
+    return new Mat([
       sx,  0,  0, 0,
        0, sy,  0, 0,
        0,  0, sz, 0,
        0,  0,  0, 1
-    );
-  }
+    ]);
+  },
 
-  static rotX(angle: number) {
+  rotX(angle: number): Mat {
     const { sin, cos } = Math;
     const S = sin(angle);
     const C = cos(angle);
     // prettier-ignore
-    return new Mat4(
+    return new Mat([
       1, 0, 0, 0,
       0, C, S, 0,
       0,-S, C, 0,
       0, 0, 0, 1
-    );
-  }
+    ]);
+  },
 
-  static rotY(angle: number) {
+  rotY(angle: number): Mat {
     const { sin, cos } = Math;
     const S = sin(angle);
     const C = cos(angle);
     // prettier-ignore
-    return new Mat4(
+    return new Mat([
       C, 0,-S, 0,
       0, 1, 0, 0,
       S, 0, C, 0,
       0, 0, 0, 1
-    );
-  }
+    ]);
+  },
 
-  static rotZ(angle: number) {
+  rotZ(angle: number): Mat {
     const { sin, cos } = Math;
     const S = sin(angle);
     const C = cos(angle);
     // prettier-ignore
-    return new Mat4(
+    return new Mat([
       C, S, 0, 0,
 	   -S, C, 0, 0,
 	    0, 0, 1, 0,
 	    0, 0, 0, 1
-    );
-  }
-}
+    ]);
+  },
+};

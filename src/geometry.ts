@@ -1,35 +1,49 @@
-
-export type Axes = 'xy' | 'xz' | 'yz';
+import { Vec } from './vector';
 
 /** @class Geometry */
-export default class Geometry {
+export class Geometry {
+  constructor(
+    public vertices: Vec[],
+    public faces: number[][],
+    public normals: Vec[],
+    public texCoords: Vec[]
+  ) {}
 
   /**
-   * create rectangle geometry
-   * @param a length of side A
-   * @param b length of side B
-   * @param axes
+   * converts to triangle array
    */
-  static rect(sizeA: number, sizeB: number, axes: Axes = 'xy') {
-    const a = sizeA * 0.5;
-    const b = sizeB * 0.5;
-    switch (axes) {
-      case 'xy':
-        return [-a, -b, 0, a, -b, 0, -a, b, 0, -a, b, 0, a, -b, 0, a, b, 0];
-      case 'xz':
-        return [-a, 0, -b, a, 0, -b, -a, 0, b, -a, 0, b, a, 0, -b, a, 0, b];
-      case 'yz':
-        return [0, -a, -b, 0, a, -b, 0, -a, b, 0, -a, b, 0, a, -b, 0, a, b];
-    }
+  toTriangles() {
+    const { faces, vertices } = this;
+    return faces
+      .map((face) => {
+        if (face.length === 3) {
+          return face.map((vertexIndex) => vertices[vertexIndex]);
+        }
+        if (face.length === 4) {
+          const q = face.map((vertexIndex) => vertices[vertexIndex]);
+          return [q[0], q[1], q[3], q[3], q[1], q[2]];
+        }
+        throw Error('not supported');
+      })
+      .flat()
+      .map((v) => v.toArray())
+      .flat();
   }
 
   /**
-   * Create square geometry (2 triangles) *
-   * @name square
-   * @param size
+   * Calculate the surface normal of a triangle
+   * @param p1 3d vector of point 1
+   * @param p2 3d vector of point 2
+   * @param p3 3d vector of point 3
    */
-  static square(size: number = 1, axes: Axes = 'xy') {
-    return Geometry.rect(size, size, axes);
+  static calculateSurfaceNormal(p1: Vec, p2: Vec, p3: Vec): Vec {
+    const u = p2.sub(p1);
+    const v = p3.sub(p1);
+    return new Vec(
+      u.x * v.z - u.z * v.y,
+      u.z * v.x - u.x * v.z,
+      u.x * v.y - u.y * v.x
+    );
   }
 
   /**
@@ -54,7 +68,7 @@ export default class Geometry {
       [a, -b, c],
       [-a, b, c],
       [a, b, c],
-    ];
+    ].map((v) => new Vec(...v));
     //     0______1
     //   4/|____5/|
     //   |2|____|_|3
@@ -81,11 +95,14 @@ export default class Geometry {
       [2, 3, 6],
       [6, 3, 7],
     ];
-    const result = faces
-      .flat()
-      .map((vertexIndex: number) => vertices[vertexIndex])
-      .flat();
-    return result;
+    const normals = faces.map((f) =>
+      Geometry.calculateSurfaceNormal(
+        vertices[f[0]],
+        vertices[f[1]],
+        vertices[f[2]]
+      )
+    );
+    return new Geometry(vertices, faces, normals, []);
   }
 
   /**
@@ -97,51 +114,124 @@ export default class Geometry {
   }
 
   /**
-   * create 2D grid geometry
-   * @param deltaX distance between x coordinates
-   * @param deltaY distance between y coordinates
-   * @param xMin minimum x coordinate
-   * @param yMin minimum y coordinate
-   * @param xMax maximum x coordinate
-   * @param yMax maximum y coordinate
-   * @returns an array of 2D coordinates [x0, y0, x1, y1, ...] for use with GL_TRIANGLES
+   * create a plane grid mesh
+   * @param x x-coord of the top left corner
+   * @param y y-coord of the top left corner
+   * @param width width of the plane
+   * @param height height of the plane
+   * @param rows number of rows
+   * @param cols number of columns
    */
   static grid(
-    deltaX = 0.1,
-    deltaY = 0.1,
-    xMin = -1,
-    yMin = -1,
-    xMax = 1,
-    yMax = 1
-  ) {
-    const dimX = Math.round((xMax - xMin) / deltaX);
-    const dimY = Math.round((yMax - yMin) / deltaY);
-    /* More modelling in ASCII art :)
-
-    x--x--x
-    | /| /|
-    |/ |/ |
-    x--x--x
-    | /| /|
-    |/ |/ |
-    x--x--x
-
-    */
-
-    const squares = Array(dimX * dimY)
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    rows: number,
+    cols: number
+  ): Geometry {
+    const deltaX = width / cols;
+    const deltaY = height / rows;
+    const vertices: Vec[] = Array((cols + 1) * (rows + 1))
       .fill(0)
-      .map((_, idx) => {
-        const col = idx % dimX;
-        const row = (idx / dimX) | 0;
-        const x0 = xMin + deltaX * col;
-        const y0 = yMin + deltaY * row;
-        const x1 = x0 + deltaX;
-        const y1 = y0 + deltaY;
-        // return two triangles per square
-        return [x0, y0, x1, y0, x0, y1, x0, y1, x1, y0, x1, y1];
+      .map((_, i) => {
+        const ix = i % cols;
+        const iy = (i / cols) | 0;
+        return new Vec(x + ix * deltaX, y + iy * deltaY, 0);
       });
-    return squares.flat();
+    const faces: number[][] = Array(rows * cols)
+      .fill(0)
+      .map((_, i) => {
+        const ix = i % cols;
+        const iy = (i / cols) | 0;
+        const idx = iy * rows + ix;
+        return [
+          [idx, idx + 1, idx + rows],
+          [idx + 1, idx + rows + 1, idx + rows],
+        ];
+      })
+      .flat(1);
+    const normals = faces.map((f) =>
+      Geometry.calculateSurfaceNormal(
+        vertices[f[0]],
+        vertices[f[1]],
+        vertices[f[2]]
+      )
+    );
+    return new Geometry(vertices, faces, normals, []);
   }
 
+  /**
+   * Create sphere geometry
+   * @param r radius
+   * @param sides number of sides (around the sphere)
+   * @param segments number of segments (from top to bottom)
+   * @see adapted from https://vorg.github.io/pex/docs/pex-gen/Sphere.html
+   */
+  static sphere(r = 0.5, sides = 36, segments = 18) {
+    const vertices: Vec[] = [];
+    const texCoords = [];
+    const faces = [];
 
+    const dphi = 360 / sides;
+    const dtheta = 180 / segments;
+
+    const evalPos = (theta: number, phi: number) => {
+      const deg = Math.PI / 180.0;
+      var pos = new Vec(
+        r * Math.sin(theta * deg) * Math.sin(phi * deg),
+        r * Math.cos(theta * deg),
+        r * Math.sin(theta * deg) * Math.cos(phi * deg)
+      );
+      return pos;
+    };
+    for (let segment = 0; segment <= segments; segment++) {
+      const theta = segment * dtheta;
+      for (let side = 0; side <= sides; side++) {
+        const phi = side * dphi;
+        const pos = evalPos(theta, phi);
+        const texCoord = new Vec(phi / 360.0, theta / 180.0);
+
+        vertices.push(pos);
+        texCoords.push(texCoord);
+
+        if (segment === segments) continue;
+        if (side === sides) continue;
+
+        if (segment == 0) {
+          // first segment uses triangles
+          faces.push([
+            segment * (sides + 1) + side,
+            (segment + 1) * (sides + 1) + side,
+            (segment + 1) * (sides + 1) + side + 1,
+          ]);
+        } else if (segment == segments - 1) {
+          // last segment also uses triangles
+          faces.push([
+            segment * (sides + 1) + side,
+            (segment + 1) * (sides + 1) + side + 1,
+            segment * (sides + 1) + side + 1,
+          ]);
+        } else {
+          // A --- B
+          // D --- C
+          const A = segment * (sides + 1) + side;
+          const B = (segment + 1) * (sides + 1) + side;
+          const C = (segment + 1) * (sides + 1) + side + 1;
+          const D = segment * (sides + 1) + side + 1;
+
+          faces.push([A, B, D]);
+          faces.push([B, C, D]);
+        }
+      }
+    }
+    const normals = faces.map((f) =>
+      Geometry.calculateSurfaceNormal(
+        vertices[f[0]],
+        vertices[f[1]],
+        vertices[f[2]]
+      )
+    );
+    return new Geometry(vertices, faces, normals, texCoords);
+  }
 }

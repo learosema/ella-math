@@ -1,7 +1,7 @@
 {
   "name": "ella-math",
-  "version": "0.1.0",
-  "description": "Ella is a shorthand for linear algebra :)",
+  "version": "0.2.0",
+  "description": "Basic geometry and linear algebra library",
   "main": "dist/ella.umd.js",
   "types": "dist/ella.d.ts",
   "scripts": {
@@ -27,14 +27,22 @@
   "homepage": "https://github.com/terabaud/ella#readme",
   "dependencies": {
     "@rollup/plugin-typescript": "^4.1.1",
-    "rollup": "^2.9.0"
+    "rollup": "^2.10.3"
   },
   "devDependencies": {
-    "@types/jest": "^25.2.1",
+    "@types/jest": "^25.2.3",
+    "husky": "^4.2.5",
     "jest": "^26.0.1",
-    "ts-jest": "^25.5.1",
-    "tslib": "^1.11.2",
-    "typedoc": "^0.17.6",
-    "typescript": "^3.8.3"
+    "prettier": "^2.0.5",
+    "pretty-quick": "^2.0.1",
+    "ts-jest": "^26.0.0",
+    "tslib": "^2.0.0",
+    "typedoc": "^0.17.7",
+    "typescript": "^3.9.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }
