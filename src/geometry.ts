@@ -163,9 +163,8 @@ export class Geometry {
    * @see adapted from https://vorg.github.io/pex/docs/pex-gen/Sphere.html
    */
   static sphere(r = 0.5, sides = 36, segments = 18) {
-    const vertices = [];
+    const vertices: Vec[] = [];
     const texCoords = [];
-    const normals = [];
     const faces = [];
 
     const dphi = 360 / sides;
@@ -180,17 +179,14 @@ export class Geometry {
       );
       return pos;
     };
-    // TODO: only use triangle faces.
     for (let segment = 0; segment <= segments; segment++) {
       const theta = segment * dtheta;
       for (let side = 0; side <= sides; side++) {
         const phi = side * dphi;
         const pos = evalPos(theta, phi);
-        const normal = pos.clone().normalized;
         const texCoord = new Vec(phi / 360.0, theta / 180.0);
 
         vertices.push(pos);
-        normals.push(normal);
         texCoords.push(texCoord);
 
         if (segment === segments) continue;
@@ -213,15 +209,27 @@ export class Geometry {
         } else {
           // A --- B
           // D --- C
-          faces.push([
-            segment * (sides + 1) + side,
-            (segment + 1) * (sides + 1) + side,
-            (segment + 1) * (sides + 1) + side + 1,
-            segment * (sides + 1) + side + 1,
-          ]);
+          const A = segment * (sides + 1) + side;
+          const B = (segment + 1) * (sides + 1) + side;
+          const C = (segment + 1) * (sides + 1) + side + 1;
+          const D = segment * (sides + 1) + side + 1;
+
+          faces.push([A, B, D]);
+          faces.push([B, C, D]);
         }
       }
     }
+    const normals = faces.map((f) =>
+      Geometry.calculateSurfaceNormal(
+        vertices[f[0]],
+        vertices[f[1]],
+        vertices[f[2]]
+      )
+    );
     return new Geometry(vertices, faces, normals, texCoords);
+  }
+
+  static parseSTL(stl: string): Geometry {
+    throw Error('Not Implemented');
   }
 }
