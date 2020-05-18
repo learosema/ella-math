@@ -1,4 +1,4 @@
-import { Vec } from './ella';
+import { Vec } from './vector';
 
 /** @class Geometry */
 export class Geometry {
