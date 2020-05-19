@@ -1,6 +1,6 @@
 {
   "name": "ella-math",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Basic geometry and linear algebra library",
   "main": "dist/ella.umd.js",
   "types": "dist/ella.d.ts",
@@ -25,16 +25,15 @@
     "url": "https://github.com/terabaud/ella/issues"
   },
   "homepage": "https://github.com/terabaud/ella#readme",
-  "dependencies": {
-    "@rollup/plugin-typescript": "^4.1.1",
-    "rollup": "^2.10.3"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@rollup/plugin-typescript": "^4.1.1",
     "@types/jest": "^25.2.3",
     "husky": "^4.2.5",
     "jest": "^26.0.1",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
+    "rollup": "^2.10.3",
     "ts-jest": "^26.0.0",
     "tslib": "^2.0.0",
     "typedoc": "^0.17.7",

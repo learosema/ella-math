@@ -24,6 +24,10 @@ export class Mat {
     }
   }
 
+  /**
+   * create identity matrix
+   * @param dimension dimension of the matrix
+   */
   static identity(dimension: number) {
     if (dimension <= 0 || !Number.isInteger(dimension)) {
       throw Error('ArgumentError');
@@ -108,6 +112,11 @@ export class Mat {
     });
   }
 
+  /**
+   * check for equality
+   * @param otherMatrix matrix to compare
+   * @returns true or false
+   */
   equals(otherMatrix: Mat) {
     if (
       this.values.length !== otherMatrix.values.length ||
@@ -124,6 +133,11 @@ export class Mat {
     return true;
   }
 
+  /**
+   * add two matrices
+   * @param otherMatrix matrix to add
+   * @returns result matrix
+   */
   add(otherMatrix: Mat) {
     if (
       this.numCols === otherMatrix.numCols &&
@@ -141,6 +155,11 @@ export class Mat {
     throw Error('ArgumentError');
   }
 
+  /**
+   * subtract another matrix
+   * @param otherMatrix matrix to subtract
+   * @returns result matrix
+   */
   sub(otherMatrix: Mat) {
     if (
       this.numCols === otherMatrix.numCols &&
@@ -158,6 +177,12 @@ export class Mat {
     throw Error('ArgumentError');
   }
 
+  /**
+   * matrix multiplication
+   * @param param can be a matrix, a number or a vector
+   * @returns a vector in case of matrix vector multiplication, else a matrix
+   * @throws dimension Mismatch if dimensions doesn't match
+   */
   mul(param: Mat | number | Vec): Mat | Vec {
     if (typeof param === 'number') {
       const multipliedValues: number[] = this.values.map(
@@ -193,6 +218,9 @@ export class Mat {
     throw Error('ArgumentError');
   }
 
+  /**
+   * calculate determinant
+   */
   determinant() {
     const { numRows, numCols } = this;
     const v = this.values;
@@ -241,6 +269,11 @@ export const Mat2 = {
     ]);
   },
 
+  /**
+   * create scaling matrix
+   * @param sx X-scale factor
+   * @param sy Y-scale factor
+   */
   scaling(sx: number, sy: number): Mat {
     // prettier-ignore
     return new Mat([
@@ -268,9 +301,9 @@ export const Mat3 = {
 
   /**
    * create scaling matrix
-   * @param sx
-   * @param sy
-   * @param sz
+   * @param sx scale X factor
+   * @param sy scale Y factor
+   * @param sz scale Z factor
    * @returns 3x3 scale matrix
    */
   scaling(sx: number, sy: number, sz: number): Mat {
@@ -282,6 +315,10 @@ export const Mat3 = {
     ]);
   },
 
+  /**
+   * create X-rotation matrix
+   * @param angle rotation in radians
+   */
   rotX(angle: number): Mat {
     const { sin, cos } = Math;
     const S = sin(angle);
@@ -294,6 +331,10 @@ export const Mat3 = {
     ]);
   },
 
+  /**
+   * create Y-rotation matrix
+   * @param angle angle in radians
+   */
   rotY(angle: number): Mat {
     const { sin, cos } = Math;
     const S = sin(angle);
@@ -306,6 +347,10 @@ export const Mat3 = {
     ]);
   },
 
+  /**
+   * create Z-rotation matrix
+   * @param angle angle in radians
+   */
   rotZ(angle: number): Mat {
     const { sin, cos } = Math;
     const S = sin(angle);
@@ -320,6 +365,9 @@ export const Mat3 = {
 };
 
 export const Mat4 = {
+  /**
+   * create 4x4 identity matrix
+   */
   identity() {
     // prettier-ignore
     return new Mat([
@@ -330,6 +378,12 @@ export const Mat4 = {
     ]);
   },
 
+  /**
+   * create translation matrix
+   * @param x translation in X direction
+   * @param y translation in Y direction
+   * @param z translation in Z direction
+   */
   translation(x: number, y: number, z: number): Mat {
     // prettier-ignore
     return new Mat([
@@ -340,6 +394,12 @@ export const Mat4 = {
     ]);
   },
 
+  /**
+   * create scaling matrix
+   * @param sx X-scale factor
+   * @param sy Y-scale factor
+   * @param sz Z-scale factor
+   */
   scaling(sx: number, sy: number, sz: number): Mat {
     // prettier-ignore
     return new Mat([
@@ -350,6 +410,10 @@ export const Mat4 = {
     ]);
   },
 
+  /**
+   * create x-rotation matrix
+   * @param angle angle in radians
+   */
   rotX(angle: number): Mat {
     const { sin, cos } = Math;
     const S = sin(angle);
@@ -363,6 +427,10 @@ export const Mat4 = {
     ]);
   },
 
+  /**
+   * create y-rotation matrix
+   * @param angle angle in radians
+   */
   rotY(angle: number): Mat {
     const { sin, cos } = Math;
     const S = sin(angle);
@@ -376,6 +444,10 @@ export const Mat4 = {
     ]);
   },
 
+  /**
+   * create z-rotation matrix
+   * @param angle angle in radians
+   */
   rotZ(angle: number): Mat {
     const { sin, cos } = Math;
     const S = sin(angle);
