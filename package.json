@@ -1,6 +1,6 @@
 {
   "name": "ella-math",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Basic geometry and linear algebra library",
   "main": "dist/ella.umd.js",
   "types": "dist/ella.d.ts",
@@ -9,7 +9,8 @@
     "docs": "typedoc && touch docs/.nojekyll",
     "build:types": "tsc -t esnext --moduleResolution node -d --emitDeclarationOnly --outFile dist/ella.d.ts src/ella.ts",
     "build:js": "rollup -c rollup.config.js",
-    "build": "npm run build:js -s && npm run build:types -s"
+    "build:minjs": "terser dist/ella.umd.js --compress --mangle > dist/ella.umd.min.js",
+    "build": "npm run build:js -s && npm run build:minjs -s && npm run build:types -s"
   },
   "files": [
     "src",
@@ -34,6 +35,7 @@
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
     "rollup": "^2.10.3",
+    "terser": "^4.7.0",
     "ts-jest": "^26.0.0",
     "tslib": "^2.0.0",
     "typedoc": "^0.17.7",
