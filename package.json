@@ -16,16 +16,13 @@
     "src",
     "dist"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/terabaud/ella.git"
-  },
+  "repository": "github:terabaud/ella-math/",
   "author": "Lea Rosema",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/terabaud/ella/issues"
+    "url": "https://github.com/terabaud/ella-math/issues"
   },
-  "homepage": "https://github.com/terabaud/ella#readme",
+  "homepage": "https://terabaud.github.io/ella-math/",
   "dependencies": {},
   "devDependencies": {
     "@rollup/plugin-typescript": "^4.1.1",
