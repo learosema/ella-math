@@ -80,15 +80,30 @@ export class Mat {
     return this.values;
   }
 
+  /**
+   * get value at a given position
+   * @param row row index starting from 0
+   * @param column column index starting from 0
+   */
   valueAt(row: number, column: number) {
     return this.values[column * this.numRows + row];
   }
 
+  /**
+   * get column at a given index
+   * @param column index of column starting from 0
+   * @returns column as an array of numbers
+   */
   colAt(column: number) {
     const { numRows } = this;
     return this.values.slice(column * numRows, column * numRows + numRows);
   }
 
+  /**
+   * get row at a given index
+   * @param row index of row starting from 0
+   * @returns row as an array of numbers
+   */
   rowAt(row: number) {
     const { numRows, numCols } = this;
     return Array(numCols)
@@ -248,6 +263,10 @@ export class Mat {
     throw Error('NotImplementedYet');
   }
 
+  /**
+   * convert matrix to string
+   * @returns a string containing matROWSxCOLS(comma-separated-values)
+   */
   toString() {
     const { numRows, numCols, values } = this;
     return `mat${numRows}x${numCols}(${values.join(', ')})`;
