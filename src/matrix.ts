@@ -233,34 +233,91 @@ export class Mat {
     throw Error('ArgumentError');
   }
 
+  div(param: number | Mat): Mat {
+    if (typeof param === 'number') {
+      const multipliedValues: number[] = this.values.map(
+        (value) => value / param
+      );
+      return new Mat(multipliedValues, {
+        numRows: this.numRows,
+        numCols: this.numCols,
+      });
+    }
+    if (param instanceof Mat) {
+      const mat = param as Mat;
+      const inversed: Mat | Vec | number = mat.inverse();
+      return this.mul(inversed) as Mat;
+    }
+    throw Error('ArgumentError');
+  }
+
   /**
-   * calculate determinant
+   * calculate determinant, implemented for mat2, mat3, mat4
    */
   determinant() {
     const { numRows, numCols } = this;
-    const v = this.values;
+
+    // glsl uses column major notation
+    const m = (col: number, row: number) => this.valueAt(row, col);
+
     if (numRows !== numCols) {
       throw Error('ArgumentError');
     }
     if (numRows === 2) {
-      return v[0] * v[3] - v[1] * v[2];
+      return m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0);
     }
     if (numRows === 3) {
-      // a0 d1 g2
-      // b3 e4 h5
-      // c6 f7 i8
-      // aei + bfg + cdh
-      //-gec - hfa - idb
+      const a00 = m(0, 0),
+        a01 = m(0, 1),
+        a02 = m(0, 2);
+      const a10 = m(1, 0),
+        a11 = m(1, 1),
+        a12 = m(1, 2);
+      const a20 = m(2, 0),
+        a21 = m(2, 1),
+        a22 = m(2, 2);
+
+      const b01 = a22 * a11 - a12 * a21;
+      const b11 = -a22 * a10 + a12 * a20;
+      const b21 = a21 * a10 - a11 * a20;
+
+      return a00 * b01 + a01 * b11 + a02 * b21;
+    }
+    if (numRows === 4) {
+      const a00 = m(0, 0),
+        a01 = m(0, 1),
+        a02 = m(0, 2),
+        a03 = m(0, 3);
+      const a10 = m(1, 0),
+        a11 = m(1, 1),
+        a12 = m(1, 2),
+        a13 = m(1, 3);
+      const a20 = m(2, 0),
+        a21 = m(2, 1),
+        a22 = m(2, 2),
+        a23 = m(2, 3);
+      const a30 = m(3, 0),
+        a31 = m(3, 1),
+        a32 = m(3, 2),
+        a33 = m(3, 3);
+
+      const b00 = a00 * a11 - a01 * a10;
+      const b01 = a00 * a12 - a02 * a10;
+      const b02 = a00 * a13 - a03 * a10;
+      const b03 = a01 * a12 - a02 * a11;
+      const b04 = a01 * a13 - a03 * a11;
+      const b05 = a02 * a13 - a03 * a12;
+      const b06 = a20 * a31 - a21 * a30;
+      const b07 = a20 * a32 - a22 * a30;
+      const b08 = a20 * a33 - a23 * a30;
+      const b09 = a21 * a32 - a22 * a31;
+      const b10 = a21 * a33 - a23 * a31;
+      const b11 = a22 * a33 - a23 * a32;
       return (
-        v[0] * v[4] * v[8] +
-        v[3] * v[7] * v[2] +
-        v[6] * v[1] * v[5] -
-        v[2] * v[4] * v[6] -
-        v[5] * v[7] * v[0] -
-        v[8] * v[1] * v[3]
+        b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06
       );
     }
-    throw Error('NotImplementedYet');
+    throw Error('ArgumentError');
   }
 
   /**
@@ -368,6 +425,32 @@ export class Mat {
       );
     }
     throw Error('NotImplementedYet');
+  }
+
+  /**
+   * Checks if the matrix contains NaN values
+   * @returns true if one of the values is NaN
+   */
+  isNaN(): boolean {
+    for (let value of this.values) {
+      if (Number.isNaN(value)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Checks if the matrix contains NaN or Infinity values
+   * @returns true if all values are finite (neither NaN nor Infinity)
+   */
+  isFinite(): boolean {
+    for (let value of this.values) {
+      if (!Number.isFinite(value)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**

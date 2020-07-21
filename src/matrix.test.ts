@@ -1,5 +1,5 @@
 import { Vec } from './vector';
-import { Mat } from './matrix';
+import { Mat, Mat4 } from './matrix';
 
 describe('generic matrix arithmetics', () => {
   test('2x3 matrix initialization', () => {
@@ -156,6 +156,22 @@ describe('2x2 matrix arithmetics', () => {
     expect(mat.determinant()).toBe(-2);
   });
 
+  test('Mat3 determinant', () => {
+    const mat = new Mat([2, 3, 5, 7, 11, 13, 17, 19, 23]);
+    expect(mat.determinant()).toBe(-78);
+  });
+
+  test('Mat4 determinant', () => {
+    // prettier-ignore
+    const mat = new Mat([
+       2,  3,  5,  7,
+      11, 13, 17, 19,
+      23, 29, 31, 37,
+      41, 43, 47, 53
+    ]);
+    expect(mat.determinant()).toBe(880);
+  });
+
   test('Mat2 multiplication with identity matrix', () => {
     const a = new Mat([2, 3, 5, 7]);
     const b = Mat.identity(2) as Mat;
@@ -178,5 +194,77 @@ describe('2x2 matrix arithmetics', () => {
   test('Mat2 toString()', () => {
     const a = new Mat([2, 3, 5, 7]);
     expect(a.toString()).toBe('mat2x2(2, 3, 5, 7)');
+  });
+
+  test('Mat2 inverse', () => {
+    const a = new Mat([2, 3, 5, 7]);
+    // 2 5 ^-1    -7  5
+    // 3 7      =  3 -2
+    const expected = new Mat([-7, 3, 5, -2]);
+    const result = a.inverse();
+    expect(result.toArray()).toEqual(expected.toArray());
+  });
+
+  test('Mat3 inverse', () => {
+    // prettier-ignore
+    const a = new Mat([
+      2, 3, 5, 
+      7, 11, 13, 
+      17, 19, 23
+    ]);
+
+    // prettier-ignore
+    const expected = new Mat([
+      -1/13, -1/3, 8/39,
+      -10/13, 1/2, -3/26,
+      9/13, -1/6, -1/78
+    ]);
+
+    const result = a.inverse();
+    expect(result.toArray()).toEqual(expected.toArray());
+  });
+
+  test('Mat4 inverse', () => {
+    // prettier-ignore
+    const a = new Mat([
+       2,  3,  5,  7,
+      11, 13, 17, 19,
+      23, 29, 31, 37,
+      41, 43, 47, 53
+    ]);
+
+    // prettier-ignore
+    const expected = new Mat([
+       3/11,  -12/55,  -1/5,   2/11,
+      -5/11,   -2/55,   3/10, -3/22,
+      -13/22, 307/440, -1/10, -9/88,
+       15/22, -37/88,      0,  7/88
+    ]);
+    const result = a.inverse();
+    expect(result.toArray()).toEqual(expected.toArray());
+  });
+
+  test('Mat4 multiplication and division', () => {
+    const a = Mat4.identity();
+    const b = Mat4.translation(-1, -2, -3);
+    const c = Mat4.scaling(2, 4, 6);
+    const d = a.mul(b) as Mat;
+    expect(d.equals(b)).toBeTruthy();
+    const e = d.mul(c) as Mat;
+    const f = e.div(c) as Mat;
+    expect(f.isFinite()).toBeTruthy();
+    expect(f.equals(d)).toBeTruthy();
+  });
+
+  test('Mat4 isFinite', () => {
+    const a = Mat.identity(4);
+    const b = a.div(0);
+    expect(b.isFinite()).toBe(false);
+  });
+
+  test('Mat4 isNaN', () => {
+    const a = Mat.identity(4);
+    const b = a.mul(NaN) as Mat;
+    expect(b.isNaN()).toBe(true);
   });
 });
