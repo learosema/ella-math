@@ -149,6 +149,28 @@ export class Mat {
   }
 
   /**
+   * check for rough equality (because in JS, .1+.2 !== .3)
+   * @param otherMatrix matrix to compare
+   * @param delta tolerance, by default 1e-14
+   * @returns true or false
+   */
+  roughlyEquals(otherMatrix: Mat, delta = 1e-14) {
+    if (
+      this.values.length !== otherMatrix.values.length ||
+      this.numCols !== otherMatrix.numCols ||
+      this.numRows !== otherMatrix.numRows
+    ) {
+      return false;
+    }
+    for (let i = 0; i < this.values.length; i++) {
+      if (Math.abs(this.values[i] - otherMatrix.values[i]) > delta) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * add two matrices
    * @param otherMatrix matrix to add
    * @returns result matrix

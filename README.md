@@ -23,7 +23,7 @@ You can either import ella via NPM or directly use it via script tag.
 First, run: `npm i ella-math`
 
 ```js
-import { Vec, Mat } from 'ella-math';
+import { Vec, Mat, Mat4 } from 'ella-math';
 
 const a = new Vec(1, 2, 3);
 const b = new Vec(2, 3, 4);
@@ -42,14 +42,32 @@ const m = new Mat([
   7, 8, 9, // column 3
 ]);
 
+const mDet = m.determinant(); // 0
 const mInv = m.inverse();
-const mResult = m.mul(mInv);
-const mI = Mat.identity(3); // create an identity matrix with a dimension of 3
-
 console.assert(
-  mResult.equals(mI),
-  'A matrix multiplied by its inverse should equal the identity matrix.'
+  mInv.isFinite() === false,
+  'As the determinant of m is 0, there is no inverse of m.'
 );
+
+const mA = Mat4.identity();
+// create a 4x4 translation matrix
+const mB = Mat4.translation(-1, -2, -3);
+// create a 4x4 scaling matrix
+const mC = Mat4.scaling(2, 4, 6);
+// matrix multiplication
+const mD = mA.mul(mB);
+console.assert(mD.equals(mB), 'mA * mB should equal mB');
+const mE = mD.mul(mC);
+// matrix division is like multiplication with its inverse
+const mF = mE.div(mC);
+
+console.assert(mF.isFinite(), 'mF should be finite.');
+console.assert(mF.equals(mD), 'mF should be equal to mD');
+
+// the equality check may sometimes fail in JS due
+// to floating point arithmetics (.1+.2 !== .3 issue)
+// roughlyEquals checks with a tolerance of 1e-14
+console.assert(mF.roughlyEquals(mD), 'mF should be roughly equal to mD');
 ```
 
 ### Directly in the browser
