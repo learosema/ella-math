@@ -122,13 +122,18 @@
 <span class="hljs-keyword">const</span> mC = Mat4.scaling(<span class="hljs-number">2</span>, <span class="hljs-number">4</span>, <span class="hljs-number">6</span>);
 <span class="hljs-comment">// matrix multiplication</span>
 <span class="hljs-keyword">const</span> mD = mA.mul(mB);
-<span class="hljs-built_in">console</span>.assert(d.equals(b), <span class="hljs-string">&#x27;mA * mB should equal mB&#x27;</span>);
+<span class="hljs-built_in">console</span>.assert(mD.equals(mB), <span class="hljs-string">&#x27;mA * mB should equal mB&#x27;</span>);
 <span class="hljs-keyword">const</span> mE = mD.mul(mC);
 <span class="hljs-comment">// matrix division is like multiplication with its inverse</span>
 <span class="hljs-keyword">const</span> mF = mE.div(mC);
 
 <span class="hljs-built_in">console</span>.assert(mF.isFinite(), <span class="hljs-string">&#x27;mF should be finite.&#x27;</span>);
-<span class="hljs-built_in">console</span>.assert(mF.equals(d));</code></pre>
+<span class="hljs-built_in">console</span>.assert(mF.equals(mD), <span class="hljs-string">&#x27;mF should be equal to mD&#x27;</span>);
+
+<span class="hljs-comment">// the equality check may sometimes fail in JS due</span>
+<span class="hljs-comment">// to floating point arithmetics (.1+.2 !== .3 issue)</span>
+<span class="hljs-comment">// roughlyEquals checks with a tolerance of 1e-14</span>
+<span class="hljs-built_in">console</span>.assert(mF.roughlyEquals(mD), <span class="hljs-string">&#x27;mF should be roughly equal to mD&#x27;</span>);</code></pre>
 				<a href="#directly-in-the-browser" id="directly-in-the-browser" style="color: inherit; text-decoration: none;">
 					<h3>Directly in the browser</h3>
 				</a>
