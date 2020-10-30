@@ -1,6 +1,6 @@
 {
   "name": "ella-math",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Basic geometry and linear algebra library",
   "main": "dist/ella.umd.js",
   "types": "dist/ella.d.ts",
