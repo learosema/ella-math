@@ -1,7 +1,7 @@
 import typescript from '@rollup/plugin-typescript';
 
 export default {
-  input: 'src/ella.ts',
+  input: 'src/ella-math.ts',
   output: [
     {
       file: 'dist/ella.esm.js',
