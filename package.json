@@ -3,8 +3,13 @@
   "version": "0.4.3",
   "description": "Basic geometry and linear algebra library",
   "main": "dist/ella.umd.js",
-  "types": "dist/ella.d.ts",
+  "types": "dist/ella-math.d.ts",
   "module": "dist/ella.esm.min.js",
+  "keywords": [
+    "maths",
+    "vector",
+    "matrix"
+  ],
   "exports": {
     ".": {
       "require": "./dist/ella.umd.min.js",
