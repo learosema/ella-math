@@ -4,11 +4,11 @@ export default {
   input: 'src/ella-math.ts',
   output: [
     {
-      file: 'dist/ella.esm.js',
+      file: 'dist/ella-math.esm.js',
       format: 'es',
     },
     {
-      file: 'dist/ella.umd.js',
+      file: 'dist/ella-math.umd.js',
       format: 'umd',
       name: 'Ella',
     },

@@ -2,9 +2,9 @@
   "name": "ella-math",
   "version": "0.4.4",
   "description": "Basic geometry and linear algebra library",
-  "main": "dist/ella.umd.js",
+  "main": "dist/ella-math.umd.js",
   "types": "dist/ella-math.d.ts",
-  "module": "dist/ella.esm.min.js",
+  "module": "dist/ella-math.esm.min.js",
   "keywords": [
     "maths",
     "vector",
@@ -12,8 +12,8 @@
   ],
   "exports": {
     ".": {
-      "require": "./dist/ella.umd.min.js",
-      "import": "./dist/ella.esm.min.js"
+      "require": "./dist/ella-math.umd.min.js",
+      "import": "./dist/ella-math.esm.min.js"
     }
   },
   "scripts": {
@@ -21,8 +21,8 @@
     "docs": "typedoc && touch docs/.nojekyll",
     "build:types": "tsc -t esnext --moduleResolution node -d --emitDeclarationOnly --outFile dist/ella-math.d.ts src/ella-math.ts",
     "build:js": "rollup -c rollup.config.js",
-    "build:minjs:umd": "terser dist/ella.umd.js --compress --mangle > dist/ella.umd.min.js",
-    "build:minjs:esm": "terser dist/ella.esm.js --compress --mangle > dist/ella.esm.min.js",
+    "build:minjs:umd": "terser dist/ella-math.umd.js --compress --mangle > dist/ella-math.umd.min.js",
+    "build:minjs:esm": "terser dist/ella-math.esm.js --compress --mangle > dist/ella-math.esm.min.js",
     "build:minjs": "npm run build:minjs:esm -s && npm run build:minjs:umd -s",
     "build": "npm run build:js -s && npm run build:minjs -s && npm run build:types -s"
   },
