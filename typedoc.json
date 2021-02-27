@@ -1,0 +1,4 @@
+{
+  "entryPoints": ["./src/ella-math.ts"],
+  "out": "docs"
+}
