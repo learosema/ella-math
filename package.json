@@ -2,9 +2,9 @@
   "name": "ella-math",
   "version": "0.4.7",
   "description": "Basic geometry and linear algebra library",
-  "main": "dist/ella-math.umd.js",
-  "types": "dist/ella-math.d.ts",
-  "module": "dist/ella-math.esm.min.js",
+  "main": "dist/index.umd.min.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.esm.min.js",
   "keywords": [
     "maths",
     "vector",
@@ -12,17 +12,20 @@
   ],
   "exports": {
     ".": {
-      "require": "./dist/ella-math.umd.min.js",
-      "import": "./dist/ella-math.esm.min.js"
+      "require": "./dist/index.umd.min.js",
+      "import": "./dist/index.esm.min.js"
     }
   },
   "scripts": {
     "test": "jest --coverage",
-    "docs": "typedoc && touch docs/.nojekyll",
-    "build:types": "tsc -t esnext --moduleResolution node -d --emitDeclarationOnly --outFile dist/ella-math.d.ts src/ella-math.ts",
+    "docs": "npx typedoc src/index.ts && touch docs/.nojekyll",
+    "lint": "npm run lint:js -s && npm run lint:package",
+    "lint:js": "eslint src",
+    "lint:package": "npx @skypack/package-check",
+    "build:types": "tsc -d --emitDeclarationOnly",
     "build:js": "rollup -c rollup.config.js",
-    "build:minjs:umd": "terser dist/ella-math.umd.js --compress --mangle > dist/ella-math.umd.min.js",
-    "build:minjs:esm": "terser dist/ella-math.esm.js --compress --mangle > dist/ella-math.esm.min.js",
+    "build:minjs:umd": "terser dist/index.umd.js --compress --mangle > dist/index.umd.min.js",
+    "build:minjs:esm": "terser dist/index.esm.js --compress --mangle > dist/index.esm.min.js",
     "build:minjs": "npm run build:minjs:esm -s && npm run build:minjs:umd -s",
     "build": "npm run build:js -s && npm run build:minjs -s && npm run build:types -s"
   },
@@ -37,20 +40,23 @@
     "url": "https://github.com/terabaud/ella-math/issues"
   },
   "homepage": "https://terabaud.github.io/ella-math/",
-  "dependencies": {},
   "devDependencies": {
-    "@rollup/plugin-typescript": "^8.2.0",
-    "@types/jest": "^26.0.20",
-    "husky": "^5.1.1",
-    "jest": "^26.6.3",
-    "prettier": "^2.2.1",
-    "pretty-quick": "^3.1.0",
-    "rollup": "^2.40.0",
-    "terser": "^5.6.0",
-    "ts-jest": "^26.5.2",
-    "tslib": "^2.1.0",
-    "typedoc": "^0.20.28",
-    "typescript": "^4.2.2"
+    "@rollup/plugin-typescript": "^8.3.0",
+    "@skypack/package-check": "^0.2.2",
+    "@types/jest": "^27.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
+    "eslint": "^8.4.0",
+    "husky": "^7.0.4",
+    "jest": "^27.4.3",
+    "prettier": "^2.5.1",
+    "pretty-quick": "^3.1.2",
+    "rollup": "^2.60.2",
+    "terser": "^5.10.0",
+    "ts-jest": "^27.1.0",
+    "tslib": "^2.3.1",
+    "typedoc": "^0.22.10",
+    "typescript": "^4.5.2"
   },
   "husky": {
     "hooks": {

@@ -14,6 +14,18 @@ describe('2D Vector arithmetics', () => {
     expect(copied.y).toBe(2);
   });
 
+  test('Vec swizzling', () => {
+    const v = new Vec(1, 2, 3, 4);
+    expect(v.x).toBe(1);
+    expect(v.y).toBe(2);
+    expect(v.z).toBe(3);
+    expect(v.w).toBe(4);
+    expect(v.xy.equals(new Vec(1, 2))).toBeTruthy();
+    expect(v.xz.equals(new Vec(1, 3))).toBeTruthy();
+    expect(v.yz.equals(new Vec(2, 3))).toBeTruthy();
+    expect(v.xyz.equals(new Vec(1, 2, 3))).toBeTruthy();
+  });
+
   test('Vec fromNumber factory', () => {
     const vector = Vec.fromNumber(3, 2);
     expect(vector.x).toBe(3);
@@ -180,6 +192,14 @@ describe('3D Vector arithmetics', () => {
     expect(v1.cross(v2).equals(v3)).toBe(true);
   });
 
+  test('Vec cross product with vectors of dimensions other than 3 should throw an error.', () => {
+    const v1 = new Vec(1, 2, 3);
+    const v2 = new Vec(1);
+    expect(() => v1.cross(v2)).toThrowError();
+    expect(() => v2.cross(v1)).toThrowError();
+  });
+
+
   test('Vec toArray conversion', () => {
     const vector = new Vec(3, -2, 1);
     expect(vector.toArray()).toEqual([3, -2, 1]);
@@ -212,4 +232,5 @@ describe('Vec 4D tests', () => {
     const vec = Vec.fromNumber(1, 4);
     expect(vec.toArray()).toEqual([1, 1, 1, 1]);
   });
+
 });

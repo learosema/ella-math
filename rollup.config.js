@@ -1,14 +1,14 @@
 import typescript from '@rollup/plugin-typescript';
 
 export default {
-  input: 'src/ella-math.ts',
+  input: 'src/index.ts',
   output: [
     {
-      file: 'dist/ella-math.esm.js',
+      file: 'dist/index.esm.js',
       format: 'es',
     },
     {
-      file: 'dist/ella-math.umd.js',
+      file: 'dist/index.umd.js',
       format: 'umd',
       name: 'Ella',
     },

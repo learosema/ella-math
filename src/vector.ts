@@ -8,6 +8,7 @@ export class Vec {
   get dim() {
     return this.values.length;
   }
+  
   get x() {
     return this.values[0];
   }

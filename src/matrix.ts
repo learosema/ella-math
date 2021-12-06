@@ -54,7 +54,7 @@ export class Mat {
   /**
    * Converts a bunch of vectors into a matrix
    */
-  static fromVectors(vectors: Vec[]): Mat {
+  static fromVectors(vectors ?: Vec[]): Mat {
     if (!vectors || vectors.length === 0) {
       throw Error('Argument error.');
     }
@@ -454,7 +454,7 @@ export class Mat {
    * @returns true if one of the values is NaN
    */
   isNaN(): boolean {
-    for (let value of this.values) {
+    for (const value of this.values) {
       if (Number.isNaN(value)) {
         return true;
       }
@@ -467,7 +467,7 @@ export class Mat {
    * @returns true if all values are finite (neither NaN nor Infinity)
    */
   isFinite(): boolean {
-    for (let value of this.values) {
+    for (const value of this.values) {
       if (!Number.isFinite(value)) {
         return false;
       }
@@ -589,8 +589,8 @@ export const Mat3 = {
     // prettier-ignore
     return new Mat([
       C, S, 0,
-	   -S, C, 0,
-	    0, 0, 1
+     -S, C, 0,
+      0, 0, 1
     ]);
   },
 };
@@ -686,9 +686,9 @@ export const Mat4 = {
     // prettier-ignore
     return new Mat([
       C, S, 0, 0,
-	   -S, C, 0, 0,
-	    0, 0, 1, 0,
-	    0, 0, 0, 1
+     -S, C, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1
     ]);
   },
 };

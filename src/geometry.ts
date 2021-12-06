@@ -178,7 +178,7 @@ export class Geometry {
 
     const evalPos = (theta: number, phi: number) => {
       const deg = Math.PI / 180.0;
-      var pos = new Vec(
+      const pos = new Vec(
         r * Math.sin(theta * deg) * Math.sin(phi * deg),
         r * Math.cos(theta * deg),
         r * Math.sin(theta * deg) * Math.cos(phi * deg)

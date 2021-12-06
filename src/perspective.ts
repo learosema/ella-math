@@ -25,8 +25,8 @@ export function ortho(
   // prettier-ignore
   return new Mat([
     2 / (right - left), 0, 0,
-	  0, 0, 2 / (top - bottom), 0,
-	  0, 0, 0, -2 / (zFar - zNear),
+    0, 0, 2 / (top - bottom), 0,
+    0, 0, 0, -2 / (zFar - zNear),
     0, tx, ty, tz, 1
   ]);
 }
@@ -56,10 +56,12 @@ export function frustum(
   const t3 = top - bottom;
   const t4 = zFar - zNear;
   // prettier-ignore
-  return new Mat([t1 / t2, 0, 0, 0,
-	        0, t1 / t3, 0, 0,
-	        (right + left) / t2, (top + bottom) / t3, (-zFar - zNear) / t4, -1,
-	        0, 0, (-t1*zFar) / t4, 0]);
+  return new Mat([
+    t1 / t2, 0, 0, 0,
+    0, t1 / t3, 0, 0,
+    (right + left) / t2, (top + bottom) / t3, (-zFar - zNear) / t4, -1,
+    0, 0, (-t1*zFar) / t4, 0
+  ]);
 }
 
 /**

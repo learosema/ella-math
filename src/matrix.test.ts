@@ -48,8 +48,7 @@ describe('generic matrix arithmetics', () => {
   });
 
   test('vectors to matrix should throw an exception when no vectors are provided', () => {
-    //@ts-ignore undefined check
-    expect(() => Mat.fromVectors(undefined)).toThrowError();
+    expect(() => Mat.fromVectors()).toThrowError();
     expect(() => Mat.fromVectors([])).toThrowError();
   });
 
