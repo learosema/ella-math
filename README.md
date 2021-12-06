@@ -1,6 +1,6 @@
-# Ella
+# ella-math
 
-Geometry and linear algebra library that provides basic vector and matrix calculus operations.
+A dependency-free Geometry and linear algebra library that provides basic vector and matrix calculus operations, written in TypeScript.
 
 ## Features
 
