@@ -27,7 +27,9 @@
     "build:minjs:umd": "terser dist/index.umd.js --compress --mangle > dist/index.umd.min.js",
     "build:minjs:esm": "terser dist/index.esm.js --compress --mangle > dist/index.esm.min.js",
     "build:minjs": "npm run build:minjs:esm -s && npm run build:minjs:umd -s",
-    "build": "npm run build:js -s && npm run build:minjs -s && npm run build:types -s"
+    "build": "npm run build:js -s && npm run build:minjs -s && npm run build:types -s",
+    "prepublishOnly": "npm run lint -s && npm test -s && npm run build",
+    "semantic-release": "semantic-release"
   },
   "files": [
     "src",
@@ -42,6 +44,7 @@
   "homepage": "https://terabaud.github.io/ella-math/",
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.0",
+    "@semantic-release/npm": "^8.0.3",
     "@skypack/package-check": "^0.2.2",
     "@types/jest": "^27.0.3",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
@@ -52,6 +55,7 @@
     "prettier": "^2.5.1",
     "pretty-quick": "^3.1.2",
     "rollup": "^2.60.2",
+    "semantic-release": "^18.0.1",
     "terser": "^5.10.0",
     "ts-jest": "^27.1.0",
     "tslib": "^2.3.1",
