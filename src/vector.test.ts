@@ -73,6 +73,12 @@ describe('2D Vector arithmetics', () => {
     expect(vector.length).toBe(5);
   });
 
+  test('Vec sqrLength', () => {
+    const v = new Vec(3, 4);
+    expect(v.sqrLength).toBe(25);
+  });
+
+
   test('Vec lerp test', () => {
     const x = new Vec(2, 0);
     const y = new Vec(0, 2);

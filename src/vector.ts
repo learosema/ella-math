@@ -126,6 +126,14 @@ export class Vec {
   }
 
   /**
+   * Calculate sqrLength
+   * @returns the squared length of this vector
+   */
+  get sqrLength() {
+    return this.values.map((v) => v ** 2).reduce((a, b) => a + b);
+  }
+
+  /**
    * Linear interpolation
    * @param otherVec other vector to interpolate to
    * @param a interpolation parameter
