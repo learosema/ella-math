@@ -73,6 +73,14 @@ describe('2D Vector arithmetics', () => {
     expect(vector.length).toBe(5);
   });
 
+  test('Vec lerp test', () => {
+    const x = new Vec(2, 0);
+    const y = new Vec(0, 2);
+    const a = .5;
+    const expected = new Vec(1, 1);
+    expect(x.lerp(y, a).equals(expected)).toBe(true);
+  })
+
   test('Vec equality', () => {
     const v1 = new Vec(1, 1);
     const v2 = new Vec(1, 1);

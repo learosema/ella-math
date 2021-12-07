@@ -126,6 +126,21 @@ export class Vec {
   }
 
   /**
+   * Linear interpolation
+   * @param otherVec other vector to interpolate to
+   * @param a interpolation parameter
+   * @returns interpolated vector
+   */
+   lerp(otherVec: Vec, a: number ) {
+    return new Vec(
+      ...this.values.map((x, idx) => {
+        const y = otherVec.values[idx];
+        return x * (1 - a) + y * a;
+      })
+    )
+  }
+
+  /**
    * Convert to array
    */
   toArray() {
