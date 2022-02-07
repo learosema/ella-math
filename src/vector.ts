@@ -134,6 +134,17 @@ export class Vec {
   }
 
   /**
+   * Check if all the components are zero
+   * @returns true if and only if all the components equals 0
+   */
+  isNullVector() : boolean {
+    for (let c of this.values)
+      if (c != 0)
+        return false;
+    return true;
+  }
+
+  /**
    * Linear interpolation
    * @param otherVec other vector to interpolate to
    * @param a interpolation parameter
