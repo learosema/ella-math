@@ -8,7 +8,7 @@ export class Vec {
   get dim() {
     return this.values.length;
   }
-  
+
   get x() {
     return this.values[0];
   }
@@ -137,10 +137,10 @@ export class Vec {
    * Check if all the components are zero
    * @returns true if and only if all the components equals 0
    */
-  isNullVector() : boolean {
-    for (let c of this.values)
-      if (c != 0)
-        return false;
+  isNullVector(): boolean {
+    for (const c of this.values) {
+      if (c !== 0) return false;
+    }
     return true;
   }
 
@@ -150,13 +150,13 @@ export class Vec {
    * @param a interpolation parameter
    * @returns interpolated vector
    */
-   lerp(otherVec: Vec, a: number ) {
+  lerp(otherVec: Vec, a: number) {
     return new Vec(
       ...this.values.map((x, idx) => {
         const y = otherVec.values[idx];
         return x * (1 - a) + y * a;
       })
-    )
+    );
   }
 
   /**
