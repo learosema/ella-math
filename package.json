@@ -35,13 +35,13 @@
     "src",
     "dist"
   ],
-  "repository": "github:terabaud/ella-math/",
+  "repository": "github:learosema/ella-math/",
   "author": "Lea Rosema",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/terabaud/ella-math/issues"
+    "url": "https://github.com/learosema/ella-math/issues"
   },
-  "homepage": "https://terabaud.github.io/ella-math/",
+  "homepage": "https://learosema.github.io/ella-math/",
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.1",
     "@semantic-release/npm": "^9.0.1",
