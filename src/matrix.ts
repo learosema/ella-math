@@ -220,6 +220,8 @@ export class Mat {
    * @returns a vector in case of matrix vector multiplication, else a matrix
    * @throws dimension Mismatch if dimensions doesn't match
    */
+  mul(param: Mat | number): Mat;
+  mul(param: Vec): Vec;
   mul(param: Mat | number | Vec): Mat | Vec {
     if (typeof param === 'number') {
       const multipliedValues: number[] = this.values.map(
